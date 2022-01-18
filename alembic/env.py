@@ -7,9 +7,12 @@ from alembic import context
 '''
 Para a posterioridade:
 [o código abaixo só vai funfar com a app rodando!]
-alembic revision --autogenerate -m "first" só funcionou dentro da pasta do app.[/money_transfer...]
+$ alembic revision --autogenerate -m "first" só funcionou dentro da pasta do app.[/money_transfer...]
 Se o comando acima estiver rodando migrations vazias, é necessário importar os models que devem virar migrations...
 ...abaixo tem um exemplo disso.
+[O comando abaixo roda as migrations no banco de dados!]
+$ alembic upgrade head 
+é necessário acessar as migrations e colocar quantos VARCHAR são suportados por cada coluna em String 
 
 '''
 # import os, sys
