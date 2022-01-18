@@ -18,3 +18,18 @@ class Item(BaseModel):
             raise ValueError('não tem z') 
         print('deu certo')
         return value.title()
+
+
+class UserBase(BaseModel):
+    name: str
+    cpf: str
+    email: str
+    password: str
+
+    
+
+class Lojistas(UserBase):
+    pass
+
+class Clients(UserBase):
+    pass
