@@ -2,7 +2,6 @@ from typing_extensions import ParamSpecKwargs
 from pydantic import BaseModel
 
 class UserBase(BaseModel):
-    id: int
     name: str
     cpf: str
     email: str
@@ -19,6 +18,6 @@ class UserOut(UserBase):
 class User(UserBase):
     password: str
 
-    class Config:
+    class Config: #Precisa disso para salvar no banco
         orm_mode = True
 

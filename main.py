@@ -1,15 +1,17 @@
+import uvicorn
 from typing_extensions import Required
 from fastapi import FastAPI, Body, HTTPException
 from fastapi.param_functions import Depends
-from sqlalchemy.orm import Session
-from models.item import Item
-import uvicorn
-from models.schemas import user_schema
-import db.user_crud as user_crud
 
-#testing
 from db import user_crud
-from db.database import SessionLocal
+from sqlalchemy.orm import Session
+from db.database import SessionLocal,engine
+
+from models.item import Item
+from models.schemas import user_schema
+
+
+
 
 app = FastAPI()
 
@@ -36,17 +38,16 @@ async def receive_item(item: Item = Body(..., embed = True)): #body - multiplepa
     print(item.name)
     return item
 
-@app.post("/create", response_model=user_schema.UserIn)
-def create_user(user:user_schema.UserIn, db: Session = Depends(get_db)):
+@app.post("/create", response_model=user_schema.UserOut)
+def create_user(user: user_schema.User, db: Session = Depends(get_db)):
     db_user = user_crud.get_user_by_email(db=db, email=user.email)
     if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    try:
-        return user_crud.create_user(db, user)
-    except Exception as e:
-        print(e)
-
-
+        raise HTTPException(
+            status_code=400,
+            detail="Email already registered")
+    return user_crud.create_user(db, user)
+   
+# @app.post("/delete/{user_id}", response_model=user_schema.UserOut)
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
     # user_crud.teste()

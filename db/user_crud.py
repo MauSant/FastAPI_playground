@@ -18,9 +18,15 @@ def get_users_by_name(db: Session, name: str):
 def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(user_db_model).offset(skip).limit(limit).all()
 
-def create_user(db: Session,  user: user_schema.UserCreate):
-    db_user = user_db_model(email=user.email, password = user.password)
+def create_user(db: Session,  user: user_schema.User):
+    db_user = user_db_model(**user.dict())
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+    return db_user
+
+def delete_user(db: Session, user: user_schema.User):
+    db_user = get_user_by_email(db,user.email)
+    db.delete(db_user)
+    db.commit()
     return db_user
