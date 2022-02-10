@@ -1,4 +1,5 @@
 from typing_extensions import ParamSpecKwargs
+from click import password_option
 from pydantic import BaseModel
 
 class UserBase(BaseModel):
@@ -7,6 +8,9 @@ class UserBase(BaseModel):
     email: str
 
 class UserCreate(UserBase):
+    password: str
+
+class UserUpdate(UserBase):
     password: str
 
 class UserIn(UserBase):

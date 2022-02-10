@@ -4,7 +4,7 @@ from models.schemas import user_schema #chamado de schema
 from crud.crud_base import CrudBase
 
 
-class UserCrud(CrudBase[user_db_model]):
+class UserCrud(CrudBase[user_db_model,user_schema.UserCreate, user_schema.UserUpdate]):
     # def get_user(self,db: Session, user_id: int) -> user_db_model:
     #     return db.query(user_db_model).filter(user_db_model.id == user_id).first()
 

@@ -7,7 +7,7 @@ from fastapi.param_functions import Depends
 from sqlalchemy.orm import Session
 from db.database import SessionLocal,engine
 
-from crud.user_crud import user_crud as UserCrud
+from crud.user_crud import user_crud as user_crud
 from models.item import Item
 from models.schemas import user_schema
 
@@ -30,9 +30,8 @@ async def root():
 
 
 @app.get("/user/{user_id}", response_model=user_schema.UserOut)
-def show_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = UserCrud.get_by_id(db,user_id)
-   
+def read_user_by_id(user_id: int, db: Session = Depends(get_db)):
+    db_user = user_crud.get_by_id(db,user_id)
     if db_user is None:
         raise HTTPException(
             status_code=404,
@@ -41,7 +40,7 @@ def show_user(user_id: int, db: Session = Depends(get_db)):
 
 # @app.get("/user/search/{users_name}", response_model=List[user_schema.UserOut])
 # def search_users_by_name(users_name: str, db: Session = Depends(get_db)):
-#     db_users = UserCrud.get_users_by_name(db, users_name)
+#     db_users = user_crud.get_users_by_name(db, users_name)
 #     if db_users is None:
 #         raise HTTPException(
 #             status_code=404,
@@ -59,13 +58,27 @@ def show_user(user_id: int, db: Session = Depends(get_db)):
 
 @app.post("/user/store", response_model=user_schema.UserOut)
 def store_user(user: user_schema.UserCreate, db: Session = Depends(get_db)):
-    db_user = UserCrud.create(db=db, user=user)
+    db_user = user_crud.create(db=db, user=user)
     if db_user:
         raise HTTPException(
             status_code=400,
             detail="User already registered")
     return db_user
    
+@app.post("/user/update/{user_id}", response_model= user_schema.UserOut)
+def update_user(
+    user_in: user_schema.UserUpdate,
+    user_id: int,
+    db: Session = Depends(get_db)
+):
+    db_user = user_crud.get_by_id(db=db, model_id=user_id)
+    if not db_user:
+        raise HTTPException(
+            status_code=400,
+            detail="Key not valid")
+    user = user_crud.update(db, db_user, user_in)
+    return user
+
 # @app.post("/delete/{user_id}", response_model=user_schema.UserOut)
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
