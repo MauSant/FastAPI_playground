@@ -8,5 +8,5 @@ class User(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     cpf = Column(String(16))
-    email = Column(String,unique=True )
+    email = Column(String,unique=True)
     password = Column(String)

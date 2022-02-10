@@ -13,7 +13,8 @@ class UserIn(UserBase):
     password: str
 
 class UserOut(UserBase):
-    pass
+    class Config:#Precisa disso para transformar da classe User do db em UserOut!
+        orm_mode = True
 
 class User(UserBase):
     password: str
