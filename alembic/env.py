@@ -10,6 +10,11 @@ Para a posterioridade:
 $ alembic revision --autogenerate -m "first" só funcionou dentro da pasta do app.[/money_transfer...]
 Se o comando acima estiver rodando migrations vazias, é necessário importar os models que devem virar migrations...
 ...abaixo tem um exemplo disso.
+Caso esteja dando problema com VARCHAR não tendo legnth use:
+[https://forum.rasa.com/t/mysql-tracker-store-gives-error-varchar-requires-a-length-on-dialect-mysql/10486/2]
+Para poder comparar tipo use:
+[ compare_type=True em run_migration_online()]
+
 [O comando abaixo roda as migrations no banco de dados!]
 $ alembic upgrade head 
 é necessário acessar as migrations e colocar quantos VARCHAR são suportados por cada coluna em String 
@@ -33,12 +38,12 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-# target_metadata = None
 
-from db.database import Base
-# Models que serão traduzidos em migrations
-from db.db_models import user_db_model
+from db.base import Base
 target_metadata = Base.metadata
+# Models que serão traduzidos em migrations
+# import db.db_models
+# from db.db_models import user_db_model
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -58,6 +63,10 @@ def run_migrations_offline():
     script output.
 
     """
+    # import db.db_models
+    # from db.db_models import user_db_model
+
+
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -77,6 +86,9 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
+    # import db.db_models
+    # from db.db_models import user_db_model
+
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",
@@ -85,7 +97,8 @@ def run_migrations_online():
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection, target_metadata=target_metadata,
+            compare_type=True
         )
 
         with context.begin_transaction():

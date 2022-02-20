@@ -1,8 +1,8 @@
 from typing_extensions import ParamSpecKwargs
+from click import password_option
 from pydantic import BaseModel
 
 class UserBase(BaseModel):
-    id: int
     name: str
     cpf: str
     email: str
@@ -10,15 +10,19 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
+class UserUpdate(UserBase):
+    password: str
+
 class UserIn(UserBase):
     password: str
 
 class UserOut(UserBase):
-    pass
+    class Config:#Precisa disso para transformar da classe User do db em UserOut!
+        orm_mode = True
 
 class User(UserBase):
     password: str
 
-    class Config:
+    class Config: #Precisa disso para salvar no banco
         orm_mode = True
 
