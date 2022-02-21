@@ -28,7 +28,7 @@ $ alembic upgrade head
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-config.set_main_option("sqlalchemy.url","mysql+pymysql://mauricio@localhost:3306/money_transfer_api")
+config.set_main_option("sqlalchemy.url","mysql+pymysql://mauricio:123@localhost:3306/fastapi_playground")
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

@@ -1,4 +1,4 @@
-from typing import TypeVar, Generic, Type, Union, Dict, Any
+from typing import TypeVar, Generic, Type, Union, Dict, Any, List
 from numpy import isin
 from sqlalchemy.orm import Session
 from models.schemas import user_schema
@@ -26,6 +26,11 @@ class CrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
     def get_all(self, db: Session):
         return db.query(self.model).all()
 
+
+    def get_multi(
+        self, db: Session, *, skip: int = 0, limit: int = 100
+    ) -> List[ModelType]:
+        return db.query(self.model).offset(skip).limit(limit).all()
 
     def create(self, db: Session, model_in: CreateSchemaType)-> ModelType:
         db_model = self.model(**model_in.dict())
