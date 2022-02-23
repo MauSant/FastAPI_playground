@@ -1,7 +1,7 @@
 import uvicorn
 from typing import List
 from typing_extensions import Required
-from fastapi import FastAPI, Body, HTTPException
+from fastapi import FastAPI, Body, HTTPException, Query
 from fastapi.param_functions import Depends
 
 from sqlalchemy.orm import Session
@@ -10,6 +10,7 @@ from db.database import SessionLocal,engine
 from crud.user_crud import user_crud as user_crud
 from models.item import Item
 from models.schemas import user_schema
+from utils.pagination import Pagination
 
 
 
@@ -39,10 +40,22 @@ def read_user_by_id(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
-@app.get("/users/", response_model= Paginate[user_schema.UserOut])
-def read_users(db: Session = Depends(get_db),
-    skip: int = 0,
-    limit: int = 100):
+@app.get("/users")
+def read_users(
+        db: Session = Depends(get_db),
+        page: int = Query(1),
+        page_size: int = Query(10)):
+    skip = (page-1) * page_size #0
+    limit = skip + page_size # 2
+    list_users = user_crud.get_multi(db=db, skip=skip, limit=limit)
+    page = Pagination(
+                    data=list_users,
+                    page_size=page_size,
+                    page=page,
+                    model_name='users')
+    
+    return page.mk_dict()
+
 # @app.get("/user/search/{users_name}", response_model=List[user_schema.UserOut])
 # def search_users_by_name(users_name: str, db: Session = Depends(get_db)):
 #     db_users = user_crud.get_users_by_name(db, users_name)
