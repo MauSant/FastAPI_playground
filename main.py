@@ -10,7 +10,8 @@ from db.database import SessionLocal,engine
 from crud.user_crud import user_crud as user_crud
 from models.item import Item
 from models.schemas import user_schema
-from utils.pagination import Pagination
+
+from utils.pagination import Pagination, page_response
 
 
 
@@ -40,7 +41,11 @@ def read_user_by_id(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
-@app.get("/users")
+# @app.get("/users", response_model=user_schema.UserPageOut)
+@app.get(
+    "/users",
+    response_model=page_response(model_out=user_schema.UserOut)
+)
 def read_users(
         db: Session = Depends(get_db),
         page: int = Query(1),
@@ -52,7 +57,7 @@ def read_users(
                     data=list_users,
                     page_size=page_size,
                     page=page,
-                    model_name='users')
+                    path_name='/users')
     
     return page.mk_dict()
 

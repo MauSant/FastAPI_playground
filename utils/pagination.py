@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, create_model
 from typing import TypeVar, Generic, List, Optional, Dict
 
 SchemaType = TypeVar("SchemaType", bound=BaseModel)
@@ -11,8 +11,8 @@ class Pagination():
             data: List[SchemaType],
             page_size: int,
             page: int,
-            model_name: str):
-        self.model_name = model_name
+            path_name: str):
+        self.path_name = path_name
         self.data = data
         self.total = len(self.data)
         self.page_size = page_size
@@ -20,12 +20,12 @@ class Pagination():
         self.pagination = self._mk_pagination()
         
 
-    def _mk_pagination(self):
+    def _mk_pagination(self) -> dict:
         skip = self.page-1 * self.page_size #0
         limit = skip + self.page_size # 2
         pagination = {}
-        previous = f'/{self.model_name}?page_num={self.page-1}&page_size={self.page_size}'
-        nextt =  f'/{self.model_name}?page_num={self.page+1}&page_size={self.page_size}'
+        previous = f'{self.path_name}?page_num={self.page-1}&page_size={self.page_size}'
+        nextt =  f'{self.path_name}?page_num={self.page+1}&page_size={self.page_size}'
         if self.page > 1:
             pagination['previous'] = previous
         else:
@@ -38,7 +38,7 @@ class Pagination():
             
         return pagination
 
-    def mk_dict(self):
+    def mk_dict(self) ->dict:
         dictt = {
             'data': self.data,
             'total': self.total,
@@ -48,8 +48,29 @@ class Pagination():
         }
         return dictt
 
+'''
+This class must be inherit from a more specific schema page,
+for example User inherith this to make UserPageOut.
+'''
+class PageResponse(BaseModel):
+    #data: List[SchemaType] # Must be substituted for a more specific schemaType, like UserOut
+    total: int
+    page_size: int
+    current_page: int
+    pagination: Dict[str,Optional[str]]
 
-
-
-
-
+'''
+Useful for path operation response_model=page_response(model_out=specific_schema)
+'''
+def page_response(model_out: SchemaType)-> BaseModel:
+    
+    page_model = create_model(
+        'page_response', 
+        total=(int, ...),
+        page_size=(int, ...),
+        current_page=(int, ...),
+        pagination=(Dict[str,Optional[str]], ...),
+        data= (List[model_out],...),
+        __base__=BaseModel
+    )
+    return page_model

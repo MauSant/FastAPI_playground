@@ -1,6 +1,7 @@
-from typing_extensions import ParamSpecKwargs
-from click import password_option
 from pydantic import BaseModel
+from utils.pagination import PageResponse
+from typing import TypeVar, Generic, List, Optional, Dict
+
 
 class UserBase(BaseModel):
     name: str
@@ -26,3 +27,6 @@ class User(UserBase):
     class Config: #Precisa disso para salvar no banco
         orm_mode = True
 
+
+# class UserPageOut(Page):
+#     data: List[Optional[UserOut]]
