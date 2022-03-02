@@ -1,11 +1,17 @@
 import uvicorn
 from typing import List, Dict
 from typing_extensions import Required
-from fastapi import FastAPI, Body, HTTPException, Query
+
 from fastapi.param_functions import Depends
+from fastapi import FastAPI, Body, HTTPException, Query
+from fastapi.security import OAuth2PasswordRequestForm
+
 
 from sqlalchemy.orm import Session
-from db.database import SessionLocal,engine, get_db
+
+from db.database import get_db
+
+from core.security import oauth2_scheme, get_current_user, authenticate_user
 
 from crud.user_crud import user_crud as user_crud
 from models.item import Item
@@ -14,15 +20,28 @@ from models.schemas import user_schema
 from utils.pagination import Pagination, page_response
 
 
-
-
 app = FastAPI()
 
+#must be on a login/security path operations package [tag = login ]
+@app.post("/login/access_token")
+async def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
+)-> None:
+    db_user = authenticate_user(
+                db=db,
+                username=form_data.username, # username = email
+                plain_pasword=form_data.password)
+    if db_user is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Incorrect email or password")
+    return {"access_token": db_user.email, "token_type": "bearer"}
 
 
 @app.get("/me")
-async def root():
-    return {"message": "Hello World"}
+async def root(current_user: user_schema.User = Depends(get_current_user)):
+    return {"message": f"{current_user}"}
 
 
 @app.get("/user/{user_id}", response_model=user_schema.UserOut)

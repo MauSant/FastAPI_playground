@@ -8,8 +8,8 @@ class UserCrud(CrudBase[user_db_model,user_schema.UserCreate, user_schema.UserUp
     # def get_user(self,db: Session, user_id: int) -> user_db_model:
     #     return db.query(user_db_model).filter(user_db_model.id == user_id).first()
 
-    # def get_user_by_email(self,db: Session, email: str) -> user_db_model:
-    #     return db.query(user_db_model).filter(user_db_model.email == email).first()
+    def get_user_by_email(self,db: Session, email: str) -> user_db_model:
+        return db.query(user_db_model).filter(user_db_model.email == email).first()
 
     def filter_user_by_name(self,db: Session, name: str) -> user_db_model:
         return db.query(user_db_model).filter(user_db_model.name == name).all()

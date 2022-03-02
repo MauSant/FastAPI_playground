@@ -19,10 +19,6 @@ class CrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
         return db.query(self.model).filter(self.model.id == model_id).first()
 
 
-    def get_by_email(self,db: Session, email: EmailStr):
-        return db.query(self.model).filter(self.model.id == email).first()
-
-
     def get_all(self, db: Session):
         return db.query(self.model).all()
 
