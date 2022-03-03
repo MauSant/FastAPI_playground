@@ -23,10 +23,15 @@ class CrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
         return db.query(self.model).all()
 
 
+    def get_count(self, db:Session)-> int:
+        return db.query(self.model).count()
+
+
     def get_multi(
         self, db: Session, *, skip: int = 0, limit: int = 100
     )-> List[ModelType]:
         return db.query(self.model).offset(skip).limit(limit).all()
+
 
     def create(self, db: Session, model_in: CreateSchemaType)-> ModelType:
         db_model = self.model(**model_in.dict())

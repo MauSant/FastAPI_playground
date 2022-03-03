@@ -11,17 +11,18 @@ class Pagination():
             data: List[SchemaType],
             page_size: int,
             page: int,
-            path_name: str):
+            path_name: str,
+            total_count: int):
         self.path_name = path_name
         self.data = data
-        self.total = len(self.data)
+        self.total_count = total_count
         self.page_size = page_size
         self.page = page
         self.pagination = self._mk_pagination()
         
 
     def _mk_pagination(self) -> dict:
-        skip = self.page-1 * self.page_size #0
+        skip = (self.page-1) * self.page_size #0
         limit = skip + self.page_size # 2
         pagination = {}
         previous = f'{self.path_name}?page_num={self.page-1}&page_size={self.page_size}'
@@ -31,7 +32,7 @@ class Pagination():
         else:
             pagination['previous'] = None
         
-        if limit >= self.total: #we dont have more pages to get!
+        if limit >= self.total_count: #we dont have more pages to get!
             pagination['next'] = None
         else: #We have pages to get!
             pagination['next'] = nextt
@@ -41,7 +42,7 @@ class Pagination():
     def mk_dict(self) ->dict:
         dictt = {
             'data': self.data,
-            'total': self.total,
+            'total': self.total_count,
             'page_size': self.page_size,
             'current_page': self.page,
             'pagination': self.pagination
