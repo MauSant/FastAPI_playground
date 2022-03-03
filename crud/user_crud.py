@@ -1,3 +1,5 @@
+from os import name
+from tokenize import Name
 from sqlalchemy.orm import Session
 from typing import Dict, Union, Any
 
@@ -15,19 +17,33 @@ class UserCrud(CrudBase[user_db_model,user_schema.UserCreate, user_schema.UserUp
     def get_user_by_email(self,db: Session, email: str) -> user_db_model:
         return db.query(user_db_model).filter(user_db_model.email == email).first()
 
-
     def filter_user_by_name(self,db: Session, name: str) -> user_db_model:
         return db.query(user_db_model).filter(user_db_model.name == name).all()
-
 
     def get_users(
         self,
         db: Session,
         skip: int = 0,
         limit: int = 100
-    )-> user_db_model:
+    ) -> user_db_model:
         return db.query(user_db_model).offset(skip).limit(limit).all()
 
+    def create_user(
+        self,
+        db: Session,
+        new_user: user_schema.UserCreate
+    ) -> user_db_model:
+        hash_password = get_password_hash(new_user.password)
+        db_model = user_db_model(
+            name=new_user.name,
+            cpf=new_user.cpf,
+            email=new_user.email,
+            hash_password=hash_password
+        )
+        db.add(db_model)
+        db.commit()
+        db.refresh(db_model)
+        return db_model
 
     def update_user(
         self,
@@ -45,7 +61,6 @@ class UserCrud(CrudBase[user_db_model,user_schema.UserCreate, user_schema.UserUp
             new_data["hash_password"] = hash_password
         return super().update(db, old_user, new_model=new_data)
 
-
     def authenticate_user(
         self,
         db: Session,
@@ -58,12 +73,7 @@ class UserCrud(CrudBase[user_db_model,user_schema.UserCreate, user_schema.UserUp
         if not verify_password(db_user.hash_password, plain_password):
             return None
         return db_user
-    # def create_user(self,db: Session,  user: user_schema.User) -> user_db_model:
-    #     db_user = user_db_model(**user.dict())
-    #     db.add(db_user)
-    #     db.commit()
-    #     db.refresh(db_user)
-    #     return db_user
+
 
     # def delete_user(self,db: Session, user: user_schema.User) -> user_db_model:
     #     db_user = self.get_user_by_email(db,user.email)

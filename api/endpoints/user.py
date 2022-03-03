@@ -42,7 +42,8 @@ def read_user_by_id(
 def read_users(
     db: Session = Depends(get_db),
     page: int = Query(1),
-    page_size: int = Query(10)
+    page_size: int = Query(10),
+    current_user = Depends(get_current_user)
 )-> Dict:
     skip = (page-1) * page_size #0
     limit = skip + page_size # 2
@@ -56,3 +57,41 @@ def read_users(
                     total_count=users_count)
     
     return page.mk_dict()
+
+
+@router.post("/user/store", response_model=user_schema.UserOut)
+def store_user(
+    user: user_schema.UserCreate,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+    ):
+    user_in_db = user_crud.get_user_by_email(db=db,email=user.email)
+    if user_in_db:
+        raise HTTPException(
+            status_code=400,
+            detail="User already registered")
+    
+    db_user = user_crud.create_user(db=db, new_user=user)
+    return db_user
+
+@router.post("/user/update/{user_id}", response_model= user_schema.UserOut)
+def update_user(
+    user_in: user_schema.UserUpdate,
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    db_user = user_crud.get_by_id(db=db, model_id=user_id)
+    if not db_user:
+        raise HTTPException(
+            status_code=400,
+            detail="Key not valid")
+    db_user = user_crud.update_user(db, db_user, user_in)
+    return db_user
+
+#TODO
+    # @app.post("/items") #Recebe um body
+    # #use o embed sempre que puder para utilizar sempre o mesmo padrão
+    # async def receive_item(item: Item = Body(..., embed = True)): #body - multipleparams Embed(docs)
+    #     print(item.name)
+    #     return item

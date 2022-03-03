@@ -1,36 +1,15 @@
 import uvicorn
-from datetime import timedelta
-from typing import List, Dict
-from typing_extensions import Required
 
-from fastapi.param_functions import Depends
-from fastapi import FastAPI, Body, HTTPException, Query
-from fastapi.security import OAuth2PasswordRequestForm
-
-
-from sqlalchemy.orm import Session
-
-from db.database import get_db
-
-from core.sec_depends import get_current_user
-from core.sec_config import ACCESS_TOKEN_EXPIRE_MINUTES
-from core.security import create_access_token
-
-from crud.user_crud import user_crud
-from models.item import Item
-from models.schemas import user_schema, token_schema
-
-from utils.pagination import Pagination, page_response
-
+from fastapi import FastAPI
 
 from api.routes import api_router
 app = FastAPI()
 
 app.include_router(api_router)
 
-@app.get("/me", response_model=user_schema.UserOut)
-async def root(current_user: user_schema.User = Depends(get_current_user)):
-    return current_user
+@app.get("/me")
+async def root():
+    return 'I live I die, I live Again'
 
 
 
@@ -41,31 +20,10 @@ async def root(current_user: user_schema.User = Depends(get_current_user)):
 
 
 
-@app.post("/user/store", response_model=user_schema.UserOut)
-def store_user(user: user_schema.UserCreate, db: Session = Depends(get_db)):
-    user_in_db = user_crud.get_by_email(db=db,email=user.email)
-    if user_in_db:
-        raise HTTPException(
-            status_code=400,
-            detail="User already registered")
-    
-    db_user = user_crud.create(db=db, model_in=user)
-    return db_user
+
    
 
-@app.post("/user/update/{user_id}", response_model= user_schema.UserOut)
-def update_user(
-    user_in: user_schema.UserUpdate,
-    user_id: int,
-    db: Session = Depends(get_db)
-):
-    db_user = user_crud.get_by_id(db=db, model_id=user_id)
-    if not db_user:
-        raise HTTPException(
-            status_code=400,
-            detail="Key not valid")
-    db_user = user_crud.update_user(db, db_user, user_in)
-    return db_user
+
 
 
 
