@@ -1,4 +1,5 @@
 import uvicorn
+from datetime import timedelta
 from typing import List, Dict
 from typing_extensions import Required
 
@@ -11,11 +12,13 @@ from sqlalchemy.orm import Session
 
 from db.database import get_db
 
-from core.security import oauth2_scheme, get_current_user, authenticate_user
+from core.sec_depends import get_current_user
+from core.sec_config import ACCESS_TOKEN_EXPIRE_MINUTES
+from core.security import create_access_token
 
 from crud.user_crud import user_crud as user_crud
 from models.item import Item
-from models.schemas import user_schema
+from models.schemas import user_schema, token_schema
 
 from utils.pagination import Pagination, page_response
 
@@ -23,29 +26,37 @@ from utils.pagination import Pagination, page_response
 app = FastAPI()
 
 #must be on a login/security path operations package [tag = login ]
-@app.post("/login/access_token")
+@app.post("/login/access_token", response_model=token_schema.Token)
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 )-> None:
-    db_user = authenticate_user(
+    db_user = user_crud.authenticate_user(
                 db=db,
                 username=form_data.username, # username = email
-                plain_pasword=form_data.password)
+                plain_password=form_data.password)
     if db_user is None:
         raise HTTPException(
             status_code=404,
             detail="Incorrect email or password")
-    return {"access_token": db_user.email, "token_type": "bearer"}
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+            subject=db_user.id,
+            expires_delta=access_token_expires
+        )
+    return {"access_token": access_token,"token_type": "bearer",}
 
 
-@app.get("/me")
+@app.get("/me", response_model=user_schema.UserOut)
 async def root(current_user: user_schema.User = Depends(get_current_user)):
-    return {"message": f"{current_user}"}
+    return current_user
 
 
 @app.get("/user/{user_id}", response_model=user_schema.UserOut)
-def read_user_by_id(user_id: int, db: Session = Depends(get_db)):
+def read_user_by_id(
+    user_id: int, db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
     db_user = user_crud.get_by_id(db,user_id)
     if db_user is None:
         raise HTTPException(
@@ -99,8 +110,8 @@ def update_user(
         raise HTTPException(
             status_code=400,
             detail="Key not valid")
-    user = user_crud.update(db, db_user, user_in)
-    return user
+    db_user = user_crud.update_user(db, db_user, user_in)
+    return db_user
 
 
 

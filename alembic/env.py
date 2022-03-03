@@ -10,7 +10,7 @@ YOU NEED TO START MYSQL SERVER:
 sudo /etc/init.d/mysql start
 
 [o código abaixo só vai funfar com a app rodando!]
-$ alembic revision --autogenerate -m "first" só funcionou dentro da pasta do app.[/money_transfer...]
+$ alembic revision --autogenerate -m "first" só funcionou dentro da pasta do app.[/fastapi_playground...]
 Se o comando acima estiver rodando migrations vazias, é necessário importar os models que devem virar migrations...
 ...abaixo tem um exemplo disso.
 Caso esteja dando problema com VARCHAR não tendo legnth use:
