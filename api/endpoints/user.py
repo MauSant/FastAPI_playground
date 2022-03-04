@@ -90,6 +90,7 @@ def update_user(
     return db_user
 
 #TODO
+# @app.post("/delete/{user_id}", response_model=user_schema.UserOut)
     # @app.post("/items") #Recebe um body
     # #use o embed sempre que puder para utilizar sempre o mesmo padrão
     # async def receive_item(item: Item = Body(..., embed = True)): #body - multipleparams Embed(docs)
