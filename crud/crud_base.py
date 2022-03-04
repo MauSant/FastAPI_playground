@@ -1,3 +1,4 @@
+from telnetlib import SE
 from typing import TypeVar, Generic, Type, Union, Dict, Any, List
 from numpy import isin
 from sqlalchemy.orm import Session
@@ -41,7 +42,8 @@ class CrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
         return db_model
 
 
-    def update(self,
+    def update(
+        self,
         db: Session,
         old_model: ModelType,
         new_model: Union[UpdateSchemaType, Dict[str,Any]]
@@ -60,6 +62,13 @@ class CrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
         db.commit()
         db.refresh(old_model)
         return old_model
+
+
+    def delete(self, id: int, db: Session)-> ModelType:
+        db_model = self.get_by_id(db,model_id=id)
+        db.delete(db_model)
+        db.commit()
+        return db_model
 
         
 

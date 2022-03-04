@@ -26,9 +26,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-@app.get("/me")
-async def root():
-    return 'I live I die, I live Again'
+
+
+
 
 
 

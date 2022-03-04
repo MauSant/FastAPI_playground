@@ -61,6 +61,8 @@ class UserCrud(CrudBase[user_db_model,user_schema.UserCreate, user_schema.UserUp
             new_data["hash_password"] = hash_password
         return super().update(db, old_user, new_model=new_data)
 
+
+
     def authenticate_user(
         self,
         db: Session,

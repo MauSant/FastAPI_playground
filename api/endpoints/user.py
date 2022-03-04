@@ -18,11 +18,12 @@ from typing import List, Dict
 
 #models & schemas
 from models.schemas import user_schema
+from models import user_db
 
 router = APIRouter()
 
 
-@router.get("/user/{user_id}", response_model=user_schema.UserOut)
+@router.get("/{user_id}", response_model=user_schema.UserOut)
 def read_user_by_id(
     user_id: int, db: Session = Depends(get_db),
     current_user=Depends(get_current_user)
@@ -36,7 +37,7 @@ def read_user_by_id(
 
 # @app.get("/users", response_model=user_schema.UserPageOut)
 @router.get(
-    "/users",
+    "/",
     response_model=page_response(model_out=user_schema.UserOut)
 )
 def read_users(
@@ -59,7 +60,7 @@ def read_users(
     return page.mk_dict()
 
 
-@router.post("/user/store", response_model=user_schema.UserOut)
+@router.post("/store", response_model=user_schema.UserOut)
 def store_user(
     user: user_schema.UserCreate,
     db: Session = Depends(get_db),
@@ -74,7 +75,7 @@ def store_user(
     db_user = user_crud.create_user(db=db, new_user=user)
     return db_user
 
-@router.post("/user/update/{user_id}", response_model= user_schema.UserOut)
+@router.post("/update/{user_id}", response_model= user_schema.UserOut)
 def update_user(
     user_in: user_schema.UserUpdate,
     user_id: int,
@@ -88,6 +89,23 @@ def update_user(
             detail="Key not valid")
     db_user = user_crud.update_user(db, db_user, user_in)
     return db_user
+
+@router.delete("/delete/{user_id}", response_model=user_schema.UserOut)
+def delete_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    db_user = user_crud.get_by_id(db, user_id)
+    if not db_user:
+        raise HTTPException(
+            status_code=400,
+            detail="user does not exist")
+    if db_user.email == current_user.email:
+         raise HTTPException(
+            status_code=405,
+            detail="Not allowed to delete logged user")
+    return user_crud.delete(user_id, db)
 
 #TODO
 # @app.post("/delete/{user_id}", response_model=user_schema.UserOut)
