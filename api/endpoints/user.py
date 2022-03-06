@@ -13,7 +13,7 @@ from utils.pagination import page_response, Pagination
 #from 3th
 from sqlalchemy.orm import Session
 from typing import List, Dict
-
+from typing import Optional
 
 
 #models & schemas
@@ -46,9 +46,8 @@ def read_users(
     page_size: int = Query(10),
     current_user = Depends(get_current_user)
 )-> Dict:
-    skip = (page-1) * page_size #0
-    limit = skip + page_size # 2
-    list_users = user_crud.get_multi(db=db, skip=skip, limit=limit)
+    skip = (page-1) * page_size
+    list_users = user_crud.get_multi(db=db, skip=skip, page_size=page_size)
     users_count = user_crud.get_count(db)
     page = Pagination(
                     data=list_users,

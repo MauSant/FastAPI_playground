@@ -29,10 +29,30 @@ class CrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
 
 
     def get_multi(
-        self, db: Session, *, skip: int = 0, limit: int = 100
+        self, db: Session, *, skip: int = 0, page_size: int = 100
     )-> List[ModelType]:
-        return db.query(self.model).offset(skip).limit(limit).all()
+        return db.query(self.model).offset(skip).limit(page_size).all()
 
+    
+    #TODO: For future implementation of Cursor Pagination 
+    def alt_get_multi(self, db:Session, page_size: int = 100, cursor: Union[int,str] = 1):
+        signal, cursor = cursor.split("|")
+        query = None
+
+        if  "next" == signal:
+            query = db.query(self.model) \
+                        .filter(self.model.id > cursor) \
+                        .order_by(self.model.id.asc()) \
+                        .limit(page_size) \
+                        .all()
+        elif "prev" == signal:
+            query = db.query(self.model) \
+                        .filter(self.model.id < cursor) \
+                        .order_by(self.model.id.desc()) \
+                        .limit(page_size) \
+                        .all()
+
+        return query
 
     def create(self, db: Session, model_in: CreateSchemaType)-> ModelType:
         db_model = self.model(**model_in.dict())

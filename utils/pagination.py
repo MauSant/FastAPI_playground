@@ -62,6 +62,7 @@ class PageResponse(BaseModel):
 
 '''
 Useful for path operation response_model=page_response(model_out=specific_schema)
+Used with validation
 '''
 def page_response(model_out: SchemaType)-> BaseModel:
     
