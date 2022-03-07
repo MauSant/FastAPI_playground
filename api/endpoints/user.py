@@ -26,7 +26,7 @@ router = APIRouter()
 @router.get("/{user_id}", response_model=user_schema.UserOut)
 def read_user_by_id(
     user_id: int, db: Session = Depends(get_db),
-    current_user=Depends(get_current_user)
+    # current_user=Depends(get_current_user)
 ):
     db_user = user_crud.get_by_id(db,user_id)
     if db_user is None:

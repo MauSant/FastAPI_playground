@@ -4,8 +4,13 @@ from sqlalchemy.orm import sessionmaker
 # import db.db_models.user_db_model 
 
 SQLALCHEMY_DATABASE_URL = "mysql+pymysql://mauricio:123@localhost:3306/fastapi_playground"
+#Another driver that suports async
+# SQLALCHEMY_DATABASE_URL = "mysql+aiomysql://mauricio:123@localhost:3306/fastapi_playground"
+
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
+# engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
+
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

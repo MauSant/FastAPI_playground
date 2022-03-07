@@ -31,7 +31,7 @@ router = APIRouter()
 
 #must be on a login/security path operations package [tag = login ]
 @router.post("/login/access_token", response_model=token_schema.Token)
-async def login(
+def login(
     response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
