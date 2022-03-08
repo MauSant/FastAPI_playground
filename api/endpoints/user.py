@@ -2,7 +2,7 @@
 from fastapi import APIRouter
 from fastapi.param_functions import Depends
 from fastapi import Body, HTTPException, Query
-import time
+from utils.context_timer import Timer
 
 #From 1th
 from db.database import get_db, async_get_db, AsyncDB
@@ -22,14 +22,7 @@ from models import user_db
 
 router = APIRouter()
 
-class Timer(object):
-    var1 = 1
-    def __enter__(self):
-        self.t = time.time()
-        return self
-    
-    def __exit__(self, *args):
-        self.t = time.time() - self.t
+
 
 
 
@@ -39,14 +32,11 @@ def read_user_by_id(
     user_id: int, db: Session = Depends(get_db),
     # current_user=Depends(get_current_user)
 ):
-    with Timer() as timer:
-        for _ in range(0,1000):
-            db_user = user_crud.get_by_id(db,user_id)
-            if db_user is None:
-                raise HTTPException(
-                    status_code=404,
-                    detail="User not found")
-    return f'It took {timer.t} seconds'
+    db_user = user_crud.get_by_id(db,user_id)
+    if db_user is None:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found")
     return db_user
 
 # @app.get("/users", response_model=user_schema.UserPageOut)
@@ -120,6 +110,12 @@ def delete_user(
             detail="Not allowed to delete logged user")
     return user_crud.delete(user_id, db)
 
+
+
+''' 
+Needs further testing and research
+for viability
+'''
 @router.get("async/{user_id}")
 # @router.get("async/{user_id}", response_model=user_schema.UserOut)
 async def get_user(user_id: int, db: AsyncDB = Depends(async_get_db)):
