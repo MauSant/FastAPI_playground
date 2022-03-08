@@ -1,23 +1,42 @@
-from telnetlib import SE
-from typing import TypeVar, Generic, Type, Union, Dict, Any, List
-from numpy import isin
-from sqlalchemy.orm import Session
-from models.schemas import user_schema
-from pydantic import BaseModel, EmailStr
+#FastAPI
 from fastapi.encoders import jsonable_encoder
+
+#From 1th
 from db.base_class import Base #sqlAlchemy model
+
+#From 3th
+from pydantic import BaseModel, EmailStr
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from typing import TypeVar, Generic, Type, Union, Dict, Any, List
+
+#models & schemas
+from models.schemas import user_schema
+
+
+
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 class CrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
-    def __init__(self, model):
+    def __init__(self, model:ModelType):
         self.model = model
+        
     
 
     def get_by_id(self,db: Session, model_id: int):
         return db.query(self.model).filter(self.model.id == model_id).first()
+
+
+    async def async_get_by_id(self, db:AsyncSession, model_id:int):
+        query = select(self.model).where(self.model.id == model_id)
+        result = await db.execute(query)
+        scalars = result.scalars()
+        first = scalars.first()  
+        return first
 
 
     def get_all(self, db: Session):

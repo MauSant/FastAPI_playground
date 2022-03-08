@@ -2,10 +2,10 @@
 from fastapi import APIRouter
 from fastapi.param_functions import Depends
 from fastapi import Body, HTTPException, Query
-
+import time
 
 #From 1th
-from db.database import get_db
+from db.database import get_db, async_get_db, AsyncDB
 from crud.user_crud import user_crud
 from core.sec_depends import get_current_user
 from utils.pagination import page_response, Pagination
@@ -22,17 +22,31 @@ from models import user_db
 
 router = APIRouter()
 
+class Timer(object):
+    var1 = 1
+    def __enter__(self):
+        self.t = time.time()
+        return self
+    
+    def __exit__(self, *args):
+        self.t = time.time() - self.t
 
-@router.get("/{user_id}", response_model=user_schema.UserOut)
+
+
+@router.get("/{user_id}")
+# @router.get("/{user_id}", response_model=user_schema.UserOut)
 def read_user_by_id(
     user_id: int, db: Session = Depends(get_db),
     # current_user=Depends(get_current_user)
 ):
-    db_user = user_crud.get_by_id(db,user_id)
-    if db_user is None:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found")
+    with Timer() as timer:
+        for _ in range(0,1000):
+            db_user = user_crud.get_by_id(db,user_id)
+            if db_user is None:
+                raise HTTPException(
+                    status_code=404,
+                    detail="User not found")
+    return f'It took {timer.t} seconds'
     return db_user
 
 # @app.get("/users", response_model=user_schema.UserPageOut)
@@ -105,6 +119,21 @@ def delete_user(
             status_code=405,
             detail="Not allowed to delete logged user")
     return user_crud.delete(user_id, db)
+
+@router.get("async/{user_id}")
+# @router.get("async/{user_id}", response_model=user_schema.UserOut)
+async def get_user(user_id: int, db: AsyncDB = Depends(async_get_db)):
+    with Timer() as timer:
+        for _ in range(0,1000):
+            result = await user_crud.async_get_by_id(db,user_id)
+
+    return f'It took {timer.t} seconds'
+    
+
+
+
+
+
 
 #TODO
 # @app.post("/delete/{user_id}", response_model=user_schema.UserOut)

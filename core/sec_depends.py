@@ -19,7 +19,7 @@ from core.sec_config import SECRET_KEY, ALGORITHM, CREDENTIALS_EXCEPTION
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login/access_token")
 
 
-async def get_current_user(
+def get_current_user(
     db: Session = Depends(get_db),
     token: str = Depends(oauth2_scheme)
 )-> user_db_model:
