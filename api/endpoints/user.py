@@ -112,15 +112,24 @@ def delete_user(
 Needs further testing and research
 for viability
 '''
-@router.get("async/{user_id}")
+@router.get("async/{user_id}", tags=['async'])
 # @router.get("async/{user_id}", response_model=user_schema.UserOut)
-async def get_user(user_id: int, db: AsyncDB = Depends(async_get_db)):
+async def async_read_user_by_id(user_id: int, db: AsyncDB = Depends(async_get_db)):
     with Timer() as timer:
         for _ in range(0,1000):
             result = await user_crud.async_get_by_id(db,user_id)
 
     return f'It took {timer.t} seconds'
+
+
+@router.get("async/all", tags=['async'])
+async def async_read_users(
+    db: AsyncDB = Depends(async_get_db),
     
+):
+    result = user_crud.async_get_all(db)
+    return result
+
 
 
 

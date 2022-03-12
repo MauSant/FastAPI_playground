@@ -33,6 +33,10 @@ class CrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
         first = scalars.first()  
         return first
 
+    async def async_get_all(self, db: AsyncSession):
+        query = select(self.model).fetch_all()
+        result = await db.execute(query)
+        return result.fetchall()
 
     def get_all(self, db: Session):
         return db.query(self.model).all()
