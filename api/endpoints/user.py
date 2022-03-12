@@ -1,9 +1,8 @@
 #FastAPI
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from fastapi.param_functions import Depends
 from fastapi import Body, HTTPException, Query
 from utils.context_timer import Timer
-
 #From 1th
 from db.database import get_db, async_get_db, AsyncDB
 from crud.user_crud import user_crud
@@ -23,14 +22,11 @@ from models import user_db
 router = APIRouter()
 
 
-
-
-
-@router.get("/{user_id}")
-# @router.get("/{user_id}", response_model=user_schema.UserOut)
+@router.get("/{user_id}", response_model=user_schema.UserOut)
 def read_user_by_id(
-    user_id: int, db: Session = Depends(get_db),
-    # current_user=Depends(get_current_user)
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
 ):
     db_user = user_crud.get_by_id(db,user_id)
     if db_user is None:

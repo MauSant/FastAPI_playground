@@ -11,7 +11,6 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 '''ASYNC'''
-#TODO: It needs to be tested with alembic migrations
 # SQLALCHEMY_DATABASE_URL = "mysql+aiomysql://mauricio:123@localhost:3306/fastapi_playground"
 # engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
 # SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
@@ -21,7 +20,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 
-def get_db():
+async def get_db():
     db = SessionLocal()
     try:
         yield db
