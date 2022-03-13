@@ -5,12 +5,12 @@ from typing import Dict, Union, Any
 
 from models.user_db import User as user_db_model #chamado de models
 from models.schemas import user_schema #chamado de schema
-from crud.crud_base import CrudBase
+from crud.async_crud.async_crud_base import AsyncCrudBase
 
 from core.security import get_password_hash, verify_password
 
 
-class UserCrud(CrudBase[user_db_model,user_schema.UserCreate, user_schema.UserUpdate]):
+class UserCrud(AsyncCrudBase[user_db_model,user_schema.UserCreate, user_schema.UserUpdate]):
     # def get_user(self,db: Session, user_id: int) -> user_db_model:
     #     return db.query(user_db_model).filter(user_db_model.id == user_id).first()
 
@@ -83,4 +83,4 @@ class UserCrud(CrudBase[user_db_model,user_schema.UserCreate, user_schema.UserUp
     #     db.commit()
     #     return db_user
 
-user_crud = UserCrud(user_db_model)
+async_user_crud = UserCrud(user_db_model)

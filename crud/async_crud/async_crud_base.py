@@ -21,7 +21,7 @@ ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
-class CrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
+class AsyncCrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
     def __init__(self, model:ModelType):
         self.model = model
 
@@ -34,9 +34,9 @@ class CrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
         return first
 
     async def async_get_all(self, db: AsyncSession):
-        query = select(self.model).fetch_all()
+        query = select(self.model).order_by(self.model.id)
         result = await db.execute(query)
-        return result.fetchall()
+        return result.scalars().all()
 
     def get_all(self, db: Session):
         return db.query(self.model).all()
