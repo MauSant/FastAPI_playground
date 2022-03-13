@@ -1,3 +1,4 @@
+import imp
 from typing import Union, Any, Dict
 
 from jose import jwt, JWTError
@@ -9,18 +10,39 @@ from fastapi.security import OAuth2PasswordBearer
 
 
 from sqlalchemy.orm import Session
-from db.database import get_db
+from db.database import get_db, async_get_db, AsyncDB
 
 from crud.user_crud import user_crud
+from crud.async_crud.async_user_crud import async_user_crud
 from models.schemas import token_schema
 from models.user_db import User as user_db_model #chamado de models
 from core.sec_config import SECRET_KEY, ALGORITHM, CREDENTIALS_EXCEPTION
+from core.security import oauth2_scheme
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login/access_token")
 
 
-def get_current_user(
-    db: Session = Depends(get_db),
+# def get_current_user(
+#     db: Session = Depends(get_db),
+#     token: str = Depends(oauth2_scheme)
+# )-> user_db_model:
+    
+#     try: 
+#         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+#         username: str = payload.get("sub")
+#         if username is None:
+#             raise CREDENTIALS_EXCEPTION
+#         token_data = token_schema.TokenPayload(**payload)
+#     except (JWTError, ValidationError):
+#         raise CREDENTIALS_EXCEPTION
+#     else:
+#         user_id = token_data.sub
+#         db_user = user_crud.get_by_id(db, user_id)
+#         if not db_user:
+#          raise HTTPException(status_code=404, detail="User not found")
+#     return db_user
+
+async def get_current_user(
+    db: AsyncDB = Depends(async_get_db),
     token: str = Depends(oauth2_scheme)
 )-> user_db_model:
     
@@ -33,7 +55,8 @@ def get_current_user(
     except (JWTError, ValidationError):
         raise CREDENTIALS_EXCEPTION
     else:
-        db_user = user_crud.get_by_id(db,token_data.sub)
+        user_id = token_data.sub
+        db_user = await async_user_crud.get_by_id(db, user_id)
         if not db_user:
          raise HTTPException(status_code=404, detail="User not found")
     return db_user

@@ -113,14 +113,24 @@ def delete_user(
 Needs further testing and research
 for viability
 '''
-@router.get("/async/{user_id}", tags=['async'])
-# @router.get("async/{user_id}", response_model=user_schema.UserOut)
-async def async_read_user_by_id(user_id: int, db: AsyncDB = Depends(async_get_db)):
-    with Timer() as timer:
-        for _ in range(0,1000):
-            result = await async_user_crud.async_get_by_id(db,user_id)
+@router.get("async/{user_id}", response_model=user_schema.UserOut, tags=['async'])
+async def async_read_user_by_id(
+        user_id: int,
+        db: AsyncDB = Depends(async_get_db),
+        current_user = Depends(get_current_user)
+    ):
+    db_user = await async_user_crud.get_by_id(db,user_id)
+    if db_user is None:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found")
+    return db_user
+    
+    # with Timer() as timer:
+    #     for _ in range(0,1000):
+    #         result = await async_user_crud.get_by_id(db,user_id)
 
-    return f'It took {timer.t} seconds'
+    # return f'It took {timer.t} seconds'
 
 
 @router.get("/async/all/", response_model=List[user_schema.UserOut], tags=['async'])
@@ -128,8 +138,8 @@ async def async_read_users(
     db: AsyncDB = Depends(async_get_db),
     
 ):
-    result = await async_user_crud.async_get_all(db)
-    user_count = await async_user_crud.async_get_count()
+    result = await async_user_crud.get_all(db)
+    # user_count = await async_user_crud.get_count()
     return result
 
 

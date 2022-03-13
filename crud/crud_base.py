@@ -31,14 +31,6 @@ class CrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
         return db.query(self.model).filter(self.model.id == model_id).first()
 
 
-    async def async_get_by_id(self, db:AsyncSession, model_id:int):
-        query = select(self.model).where(self.model.id == model_id)
-        result = await db.execute(query)
-        scalars = result.scalars()
-        first = scalars.first()  
-        return first
-
-
     def get_all(self, db: Session):
         return db.query(self.model).all()
 

@@ -6,7 +6,7 @@ from db.base_class import Base #sqlAlchemy model
 
 #From 3th
 from pydantic import BaseModel, EmailStr
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import TypeVar, Generic, Type, Union, Dict, Any, List
@@ -26,24 +26,24 @@ class AsyncCrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
         self.model = model
 
 
-    async def async_get_by_id(self, db:AsyncSession, model_id:int):
+    async def get_by_id(self, db:AsyncSession, model_id:int):
         query = select(self.model).where(self.model.id == model_id)
         result = await db.execute(query)
-        scalars = result.scalars()
-        first = scalars.first()  
-        return first
+        return result.scalars().first()
 
-    async def async_get_all(self, db: AsyncSession):
-        query = select(self.model).order_by(self.model.id)
-        result = await db.execute(query)
+
+    async def get_all(self, db: AsyncSession):
+        query = select(self.model)
+        result = await db.execute(query) 
         return result.scalars().all()
 
-    def get_all(self, db: Session):
-        return db.query(self.model).all()
-
-
-    def get_count(self, db:Session)-> int:
-        return db.query(self.model).count()
+    '''
+    Needs test
+    '''
+    async def get_count(self, db:AsyncSession)-> int:
+        query = select([func.count()]).select_from(self.model)
+        result = await db.execute(query)
+        return result.scalars().all()
 
 
     def get_multi(

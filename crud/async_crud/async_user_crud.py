@@ -1,32 +1,39 @@
-from os import name
-from tokenize import Name
-from sqlalchemy.orm import Session
-from typing import Dict, Union, Any
 
-from models.user_db import User as user_db_model #chamado de models
-from models.schemas import user_schema #chamado de schema
-from crud.async_crud.async_crud_base import AsyncCrudBase
+#FastAPI
 
+#From 1th
+from db.database import AsyncDB
 from core.security import get_password_hash, verify_password
 
 
-class UserCrud(AsyncCrudBase[user_db_model,user_schema.UserCreate, user_schema.UserUpdate]):
+#from 3th
+from typing import List, Dict
+from typing import Dict, Union, Any
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session
+
+
+#models & schemas
+from models.schemas import user_schema #chamado de schema
+from models.user_db import User as user_db_model #chamado de models
+
+#Cruds
+from crud.async_crud.async_crud_base import AsyncCrudBase
+
+
+class AsyncUserCrud(AsyncCrudBase[user_db_model,user_schema.UserCreate, user_schema.UserUpdate]):
     # def get_user(self,db: Session, user_id: int) -> user_db_model:
     #     return db.query(user_db_model).filter(user_db_model.id == user_id).first()
 
-    def get_user_by_email(self,db: Session, email: str) -> user_db_model:
-        return db.query(user_db_model).filter(user_db_model.email == email).first()
+    async def get_user_by_email(self,db: AsyncDB, email: str) -> user_db_model:
+        query = select(self.model).where(self.model.email == email)
+        result = await db.execute(query) 
+        return result.scalars().first()
 
     def filter_user_by_name(self,db: Session, name: str) -> user_db_model:
         return db.query(user_db_model).filter(user_db_model.name == name).all()
 
-    def get_users(
-        self,
-        db: Session,
-        skip: int = 0,
-        limit: int = 100
-    ) -> user_db_model:
-        return db.query(user_db_model).offset(skip).limit(limit).all()
 
     def create_user(
         self,
@@ -63,13 +70,13 @@ class UserCrud(AsyncCrudBase[user_db_model,user_schema.UserCreate, user_schema.U
 
 
 
-    def authenticate_user(
+    async def authenticate_user(
         self,
-        db: Session,
+        db: AsyncDB,
         username: str,
         plain_password: str
     )-> user_db_model:
-        db_user = self.get_user_by_email(db, email=username)
+        db_user = await self.get_user_by_email(db, email=username)
         if not db_user:
             return None
         if not verify_password(db_user.hash_password, plain_password):
@@ -83,4 +90,4 @@ class UserCrud(AsyncCrudBase[user_db_model,user_schema.UserCreate, user_schema.U
     #     db.commit()
     #     return db_user
 
-async_user_crud = UserCrud(user_db_model)
+async_user_crud = AsyncUserCrud(user_db_model)
