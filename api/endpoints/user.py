@@ -129,6 +129,7 @@ async def async_read_users(
     
 ):
     result = await async_user_crud.async_get_all(db)
+    user_count = await async_user_crud.async_get_count()
     return result
 
 
