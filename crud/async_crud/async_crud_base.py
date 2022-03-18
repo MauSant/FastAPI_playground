@@ -78,8 +78,8 @@ class AsyncCrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
     async def create(self, db: AsyncSession, model_in: CreateSchemaType)-> ModelType:
         db_model = self.model(**model_in.dict())
         db.add(db_model)
-        db.commit()
-        db.refresh(db_model)
+        await db.commit()
+        await db.refresh(db_model)
         return db_model
 
 
