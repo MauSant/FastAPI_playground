@@ -1,7 +1,7 @@
 #FastAPI
 from fastapi import APIRouter, Request
 from fastapi.param_functions import Depends
-from fastapi import Body, HTTPException, Query
+from fastapi import Body, HTTPException, Query, Path
 from utils.context_timer import Timer
 #From 1th
 from db.database import get_db, async_get_db, AsyncDB
@@ -178,12 +178,12 @@ async def async_store_user(
 
 
 @router.put(
-    "/async/update",
+    "/async/update/{user_id}",
     response_model=user_schema.UserOut,
     tags=["async"]
 )
 async def async_update_user(
-    user_id: int,
+    user_id: int = Path(...),
     user_in: user_schema.UserUpdate = Body(...),
     db: AsyncDB = Depends(async_get_db),
     current_user = Depends(get_current_user)
@@ -195,6 +195,28 @@ async def async_update_user(
             detail="Key not valid")
     db_user = await async_user_crud.update_user(db, db_user, user_in)
     return db_user
+
+
+@router.delete(
+    "async/delete/{user_id}",
+    response_model=user_schema.UserOut,
+    tags=["async"]
+    )
+async def async_delete_user(
+    user_id: int = Path(...),
+    db: AsyncDB = Depends(async_get_db),
+    current_user = Depends(get_current_user)
+):
+    db_user = await async_user_crud.get_by_id(db, user_id)
+    if not db_user:
+        raise HTTPException(
+            status_code=400,
+            detail="user does not exist")
+    if db_user.email == current_user.email:
+         raise HTTPException(
+            status_code=405,
+            detail="Not allowed to delete logged user")
+    return await async_user_crud.delete(user_id, db)
 
 #TODO
 # @app.post("/delete/{user_id}", response_model=user_schema.UserOut)

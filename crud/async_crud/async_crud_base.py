@@ -85,7 +85,7 @@ class AsyncCrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
 
     async def update(
         self,
-        db: Session,
+        db: AsyncSession,
         old_model: ModelType,
         new_model: Union[UpdateSchemaType, Dict[str,Any]]
     ) ->ModelType:
@@ -105,10 +105,10 @@ class AsyncCrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
         return old_model
 
 
-    def delete(self, id: int, db: Session)-> ModelType:
-        db_model = self.get_by_id(db,model_id=id)
-        db.delete(db_model)
-        db.commit()
+    async def delete(self, id: int, db: Session)-> ModelType:
+        db_model = await self.get_by_id(db,model_id=id)
+        await db.delete(db_model)
+        await db.commit()
         return db_model
 
         
