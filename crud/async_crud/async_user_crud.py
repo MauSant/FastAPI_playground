@@ -35,9 +35,9 @@ class AsyncUserCrud(AsyncCrudBase[user_db_model,user_schema.UserCreate, user_sch
         return db.query(user_db_model).filter(user_db_model.name == name).all()
 
 
-    def create_user(
+    async def create_user(
         self,
-        db: Session,
+        db: AsyncDB,
         new_user: user_schema.UserCreate
     ) -> user_db_model:
         hash_password = get_password_hash(new_user.password)
@@ -48,8 +48,8 @@ class AsyncUserCrud(AsyncCrudBase[user_db_model,user_schema.UserCreate, user_sch
             hash_password=hash_password
         )
         db.add(db_model)
-        db.commit()
-        db.refresh(db_model)
+        await db.commit()
+        await db.refresh(db_model)
         return db_model
 
     def update_user(

@@ -41,7 +41,7 @@ class AsyncCrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
         return result.scalars().all()
 
 
-    async def get_count(self, db:AsyncSession)-> int:
+    async def get_count(self, db: AsyncSession)-> int:
         query = select([func.count()]).select_from(self.model)
         result = await db.execute(query)
         return result.scalars().first()
@@ -56,7 +56,7 @@ class AsyncCrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
 
     
     #TODO: For future implementation of Cursor Pagination 
-    def alt_get_multi(self, db:Session, page_size: int = 100, cursor: Union[int,str] = 1):
+    def alt_get_multi(self, db: AsyncSession, page_size: int = 100, cursor: Union[int,str] = 1):
         signal, cursor = cursor.split("|")
         query = None
 
@@ -75,7 +75,7 @@ class AsyncCrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
 
         return query
 
-    def create(self, db: Session, model_in: CreateSchemaType)-> ModelType:
+    async def create(self, db: AsyncSession, model_in: CreateSchemaType)-> ModelType:
         db_model = self.model(**model_in.dict())
         db.add(db_model)
         db.commit()

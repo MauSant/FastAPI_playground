@@ -38,10 +38,6 @@ def read_user_by_id(
 
 
 @router.get("/", response_model=user_schema.UserPageOut)
-# @router.get(
-#     "/",
-#     response_model=page_response(model_out=user_schema.UserOut, name='oi')
-# )
 def read_users(
     db: Session = Depends(get_db),
     page: int = Query(1),
@@ -138,7 +134,6 @@ async def async_read_user_by_id(
     # "/async/all/",
     # response_model=page_response(model_out=user_schema.UserOut, name='t')
 # )
-
 @router.get(
     "/async/all/",
     response_model=user_schema.UserPageOut,
@@ -163,6 +158,24 @@ async def async_read_users(
     return page.mk_dict()
 
 
+@router.post(
+        "/async/store",
+        response_model=user_schema.UserOut,
+        tags=['async']
+)
+async def async_store_user(
+    request: Request,
+    user: user_schema.UserCreate = Body(...),
+    db: AsyncDB = Depends(async_get_db),
+    current_user = Depends(get_current_user)
+):
+    user_in_db = await async_user_crud.get_user_by_email(db=db, email=user.email)
+    if user_in_db:
+        raise HTTPException(
+            status_code=400,
+            detail="User already registered")
+    db_user = await async_user_crud.create_user(db=db, new_user=user)
+    return db_user
 
 
 
