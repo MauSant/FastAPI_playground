@@ -8,7 +8,7 @@ api_router.include_router(auth.router, tags=["auth"])
 api_router.include_router(user.router, prefix="/users", tags=["users"])
 
 
-@api_router.get("/me", tags=["Main"])
+@api_router.get("/", tags=["Main"])
 def root():
     return 'I live I die, I live Again'
 # api_router.include_router(utils.router, prefix="/utils", tags=["utils"])

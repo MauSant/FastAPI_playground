@@ -10,7 +10,7 @@ from fastapi.security import OAuth2PasswordBearer
 from core.sec_config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login/access_token")
+# oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login/access_token")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="async/login/access_token")
 
 

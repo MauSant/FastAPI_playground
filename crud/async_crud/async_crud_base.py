@@ -10,6 +10,7 @@ from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import TypeVar, Generic, Type, Union, Dict, Any, List
+from db.database import AsyncDB
 
 #models & schemas
 from models.schemas import user_schema
@@ -22,6 +23,8 @@ CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 class AsyncCrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
+    __slots__= ('model',)
+    
     def __init__(self, model:ModelType):
         self.model = model
 
@@ -37,19 +40,19 @@ class AsyncCrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
         result = await db.execute(query) 
         return result.scalars().all()
 
-    '''
-    Needs test
-    '''
+
     async def get_count(self, db:AsyncSession)-> int:
         query = select([func.count()]).select_from(self.model)
         result = await db.execute(query)
-        return result.scalars().all()
+        return result.scalars().first()
 
 
-    def get_multi(
-        self, db: Session, *, skip: int = 0, page_size: int = 100
+    async def get_multi(
+        self, db: AsyncDB, *, skip: int = 0, page_size: int = 100
     )-> List[ModelType]:
-        return db.query(self.model).offset(skip).limit(page_size).all()
+        query = select(self.model).offset(skip).limit(page_size)
+        result = await db.execute(query) 
+        return result.scalars().all()
 
     
     #TODO: For future implementation of Cursor Pagination 

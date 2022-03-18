@@ -36,11 +36,12 @@ def read_user_by_id(
             detail="User not found")
     return db_user
 
-# @app.get("/users", response_model=user_schema.UserPageOut)
-@router.get(
-    "/",
-    response_model=page_response(model_out=user_schema.UserOut)
-)
+
+@router.get("/", response_model=user_schema.UserPageOut)
+# @router.get(
+#     "/",
+#     response_model=page_response(model_out=user_schema.UserOut, name='oi')
+# )
 def read_users(
     db: Session = Depends(get_db),
     page: int = Query(1),
@@ -113,7 +114,7 @@ def delete_user(
 Needs further testing and research
 for viability
 '''
-@router.get("async/{user_id}", response_model=user_schema.UserOut, tags=['async'])
+@router.get("/async/{user_id}", response_model=user_schema.UserOut, tags=['async'])
 async def async_read_user_by_id(
         user_id: int,
         db: AsyncDB = Depends(async_get_db),
@@ -133,14 +134,33 @@ async def async_read_user_by_id(
     # return f'It took {timer.t} seconds'
 
 
-@router.get("/async/all/", response_model=List[user_schema.UserOut], tags=['async'])
+# @router.get(
+    # "/async/all/",
+    # response_model=page_response(model_out=user_schema.UserOut, name='t')
+# )
+
+@router.get(
+    "/async/all/",
+    response_model=user_schema.UserPageOut,
+    tags=['async']
+)
 async def async_read_users(
+    page: int = Query(1),
+    page_size: int = Query(10),
     db: AsyncDB = Depends(async_get_db),
-    
+    current_user = Depends(get_current_user)
 ):
-    result = await async_user_crud.get_all(db)
-    # user_count = await async_user_crud.get_count()
-    return result
+    skip = (page-1) * page_size
+    list_users = await async_user_crud.get_multi(db=db, skip=skip, page_size=page_size)
+    users_count = await async_user_crud.get_count(db)
+    page = Pagination(
+                data=list_users,
+                page_size=page_size,
+                page=page,
+                path_name='/users/async',
+                total_count=users_count)
+    
+    return page.mk_dict()
 
 
 

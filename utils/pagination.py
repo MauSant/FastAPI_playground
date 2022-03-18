@@ -22,8 +22,8 @@ class Pagination():
         
 
     def _mk_pagination(self) -> dict:
-        skip = (self.page-1) * self.page_size #0
-        limit = skip + self.page_size # 2
+        skip = (self.page-1) * self.page_size 
+        limit = skip + self.page_size # the limit id that i will collect
         pagination = {}
         previous = f'{self.path_name}?page_num={self.page-1}&page_size={self.page_size}'
         nextt =  f'{self.path_name}?page_num={self.page+1}&page_size={self.page_size}'
@@ -64,10 +64,10 @@ class PageResponse(BaseModel):
 Useful for path operation response_model=page_response(model_out=specific_schema)
 Used with validation
 '''
-def page_response(model_out: SchemaType)-> BaseModel:
+def page_response(model_out: SchemaType, name: str):
     
     page_model = create_model(
-        'page_response', 
+        name, 
         total=(int, ...),
         page_size=(int, ...),
         current_page=(int, ...),

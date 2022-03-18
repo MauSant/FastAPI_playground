@@ -4,6 +4,7 @@ from typing import TypeVar, Generic, List, Optional, Dict
 
 
 class UserBase(BaseModel):
+
     name: str
     cpf: str
     email: str
@@ -19,6 +20,7 @@ class UserOut(UserBase):
         orm_mode = True
 
 class User(UserBase):
+
     id: int
     password: str
 
@@ -26,7 +28,8 @@ class User(UserBase):
         orm_mode = True
 
 class UserInDB(User):
+
     hash_password: str
 
-# class UserPageOut(Page):
-#     data: List[Optional[UserOut]]
+class UserPageOut(PageResponse):
+    data: List[UserOut]

@@ -22,6 +22,8 @@ CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 class CrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
+    __slots__=('model',)
+    
     def __init__(self, model:ModelType):
         self.model = model
         

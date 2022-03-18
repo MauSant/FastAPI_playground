@@ -52,6 +52,7 @@ async def get_current_user(
         if username is None:
             raise CREDENTIALS_EXCEPTION
         token_data = token_schema.TokenPayload(**payload)
+
     except (JWTError, ValidationError):
         raise CREDENTIALS_EXCEPTION
     else:
