@@ -52,7 +52,7 @@ class AsyncUserCrud(AsyncCrudBase[user_db_model,user_schema.UserCreate, user_sch
         await db.refresh(db_model)
         return db_model
 
-    def update_user(
+    async def update_user(
         self,
         db:Session,
         old_user:user_db_model,
@@ -66,7 +66,7 @@ class AsyncUserCrud(AsyncCrudBase[user_db_model,user_schema.UserCreate, user_sch
             hash_password = get_password_hash(new_data['password'])
             del new_data["password"]
             new_data["hash_password"] = hash_password
-        return super().update(db, old_user, new_model=new_data)
+        return await super().update(db, old_user, new_model=new_data)
 
 
 

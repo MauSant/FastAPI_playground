@@ -72,7 +72,7 @@ def store_user(
     db_user = user_crud.create_user(db=db, new_user=user)
     return db_user
 
-@router.post("/update/{user_id}", response_model= user_schema.UserOut)
+@router.put("/update/{user_id}", response_model= user_schema.UserOut)
 def update_user(
     user_in: user_schema.UserUpdate,
     user_id: int,
@@ -164,7 +164,6 @@ async def async_read_users(
         tags=['async']
 )
 async def async_store_user(
-    request: Request,
     user: user_schema.UserCreate = Body(...),
     db: AsyncDB = Depends(async_get_db),
     current_user = Depends(get_current_user)
@@ -178,8 +177,24 @@ async def async_store_user(
     return db_user
 
 
-
-
+@router.put(
+    "/async/update",
+    response_model=user_schema.UserOut,
+    tags=["async"]
+)
+async def async_update_user(
+    user_id: int,
+    user_in: user_schema.UserUpdate = Body(...),
+    db: AsyncDB = Depends(async_get_db),
+    current_user = Depends(get_current_user)
+):
+    db_user = await async_user_crud.get_by_id(db=db, model_id=user_id)
+    if not db_user:
+        raise HTTPException(
+            status_code=400,
+            detail="Key not valid")
+    db_user = await async_user_crud.update_user(db, db_user, user_in)
+    return db_user
 
 #TODO
 # @app.post("/delete/{user_id}", response_model=user_schema.UserOut)

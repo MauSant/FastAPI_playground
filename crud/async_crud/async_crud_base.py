@@ -83,7 +83,7 @@ class AsyncCrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
         return db_model
 
 
-    def update(
+    async def update(
         self,
         db: Session,
         old_model: ModelType,
@@ -100,8 +100,8 @@ class AsyncCrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
                 setattr(old_model, field, new_value)
         
         db.add(old_model)
-        db.commit()
-        db.refresh(old_model)
+        await db.commit()
+        await db.refresh(old_model)
         return old_model
 
 
