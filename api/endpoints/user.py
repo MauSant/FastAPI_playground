@@ -7,7 +7,7 @@ from utils.context_timer import Timer
 from db.database import get_db, async_get_db, AsyncDB
 from crud.user_crud import user_crud
 from crud.async_crud.async_user_crud import async_user_crud  
-from core.sec_depends import get_current_user
+from core.sec_depends import get_current_user, get_current_super_user
 from utils.pagination import page_response, Pagination
 
 #from 3th
@@ -23,93 +23,89 @@ from models import user_db
 router = APIRouter()
 
 
-@router.get("/{user_id}", response_model=user_schema.UserOut)
-def read_user_by_id(
-    user_id: int,
-    db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
-):
-    db_user = user_crud.get_by_id(db,user_id)
-    if db_user is None:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found")
-    return db_user
+# @router.get("/{user_id}", response_model=user_schema.UserOut)
+# def read_user_by_id(
+#     user_id: int,
+#     db: Session = Depends(get_db),
+#     current_user = Depends(get_current_user)
+# ):
+#     db_user = user_crud.get_by_id(db,user_id)
+#     if db_user is None:
+#         raise HTTPException(
+#             status_code=404,
+#             detail="User not found")
+#     return db_user
 
 
-@router.get("/", response_model=user_schema.UserPageOut)
-def read_users(
-    db: Session = Depends(get_db),
-    page: int = Query(1),
-    page_size: int = Query(10),
-    current_user = Depends(get_current_user)
-)-> Dict:
-    skip = (page-1) * page_size
-    list_users = user_crud.get_multi(db=db, skip=skip, page_size=page_size)
-    users_count = user_crud.get_count(db)
-    page = Pagination(
-                    data=list_users,
-                    page_size=page_size,
-                    page=page,
-                    path_name='/users',
-                    total_count=users_count)
+# @router.get("/", response_model=user_schema.UserPageOut)
+# def read_users(
+#     db: Session = Depends(get_db),
+#     page: int = Query(1),
+#     page_size: int = Query(10),
+#     current_user = Depends(get_current_user)
+# )-> Dict:
+#     skip = (page-1) * page_size
+#     list_users = user_crud.get_multi(db=db, skip=skip, page_size=page_size)
+#     users_count = user_crud.get_count(db)
+#     page = Pagination(
+#                     data=list_users,
+#                     page_size=page_size,
+#                     page=page,
+#                     path_name='/users',
+#                     total_count=users_count)
     
-    return page.mk_dict()
+#     return page.mk_dict()
 
 
-@router.post("/store", response_model=user_schema.UserOut)
-def store_user(
-    user: user_schema.UserCreate,
-    db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
-    ):
-    user_in_db = user_crud.get_user_by_email(db=db,email=user.email)
-    if user_in_db:
-        raise HTTPException(
-            status_code=400,
-            detail="User already registered")
+# @router.post("/store", response_model=user_schema.UserOut)
+# def store_user(
+#     user: user_schema.UserCreate,
+#     db: Session = Depends(get_db),
+#     current_user = Depends(get_current_user)
+#     ):
+#     user_in_db = user_crud.get_user_by_email(db=db,email=user.email)
+#     if user_in_db:
+#         raise HTTPException(
+#             status_code=400,
+#             detail="User already registered")
     
-    db_user = user_crud.create_user(db=db, new_user=user)
-    return db_user
+#     db_user = user_crud.create_user(db=db, new_user=user)
+#     return db_user
 
-@router.put("/update/{user_id}", response_model= user_schema.UserOut)
-def update_user(
-    user_in: user_schema.UserUpdate,
-    user_id: int,
-    db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
-):
-    db_user = user_crud.get_by_id(db=db, model_id=user_id)
-    if not db_user:
-        raise HTTPException(
-            status_code=400,
-            detail="Key not valid")
-    db_user = user_crud.update_user(db, db_user, user_in)
-    return db_user
+# @router.put("/update/{user_id}", response_model= user_schema.UserOut)
+# def update_user(
+#     user_in: user_schema.UserUpdate,
+#     user_id: int,
+#     db: Session = Depends(get_db),
+#     current_user = Depends(get_current_user)
+# ):
+#     db_user = user_crud.get_by_id(db=db, model_id=user_id)
+#     if not db_user:
+#         raise HTTPException(
+#             status_code=400,
+#             detail="Key not valid")
+#     db_user = user_crud.update_user(db, db_user, user_in)
+#     return db_user
 
-@router.delete("/delete/{user_id}", response_model=user_schema.UserOut)
-def delete_user(
-    user_id: int,
-    db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
-):
-    db_user = user_crud.get_by_id(db, user_id)
-    if not db_user:
-        raise HTTPException(
-            status_code=400,
-            detail="user does not exist")
-    if db_user.email == current_user.email:
-         raise HTTPException(
-            status_code=405,
-            detail="Not allowed to delete logged user")
-    return user_crud.delete(user_id, db)
+# @router.delete("/delete/{user_id}", response_model=user_schema.UserOut)
+# def delete_user(
+#     user_id: int,
+#     db: Session = Depends(get_db),
+#     current_user = Depends(get_current_user)
+# ):
+#     db_user = user_crud.get_by_id(db, user_id)
+#     if not db_user:
+#         raise HTTPException(
+#             status_code=400,
+#             detail="user does not exist")
+#     if db_user.email == current_user.email:
+#          raise HTTPException(
+#             status_code=405,
+#             detail="Not allowed to delete logged user")
+#     return user_crud.delete(user_id, db)
 
 
 
-''' 
-Needs further testing and research
-for viability
-'''
 @router.get("/async/{user_id}", response_model=user_schema.UserOut, tags=['async'])
 async def async_read_user_by_id(
         user_id: int,
@@ -186,13 +182,18 @@ async def async_update_user(
     user_id: int = Path(...),
     user_in: user_schema.UserUpdate = Body(...),
     db: AsyncDB = Depends(async_get_db),
-    current_user = Depends(get_current_user)
+    current_user: user_db.User = Depends(get_current_super_user) 
+    # current_user: user_db.User  = Depends(get_current_user)
 ):
     db_user = await async_user_crud.get_by_id(db=db, model_id=user_id)
     if not db_user:
         raise HTTPException(
             status_code=400,
             detail="Key not valid")
+    if db_user.email == current_user.email:
+        raise HTTPException(
+            status_code=405,
+            detail="Not allowed to modify logged user")
     db_user = await async_user_crud.update_user(db, db_user, user_in)
     return db_user
 
@@ -205,7 +206,7 @@ async def async_update_user(
 async def async_delete_user(
     user_id: int = Path(...),
     db: AsyncDB = Depends(async_get_db),
-    current_user = Depends(get_current_user)
+    current_user: user_db.User = Depends(get_current_user)
 ):
     db_user = await async_user_crud.get_by_id(db, user_id)
     if not db_user:

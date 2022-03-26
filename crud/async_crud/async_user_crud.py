@@ -7,11 +7,10 @@ from core.security import get_password_hash, verify_password
 
 
 #from 3th
-from typing import List, Dict
-from typing import Dict, Union, Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import Session
+from typing import Dict, Union, Any, List, Optional
 
 
 #models & schemas
@@ -82,6 +81,15 @@ class AsyncUserCrud(AsyncCrudBase[user_db_model,user_schema.UserCreate, user_sch
         if not verify_password(db_user.hash_password, plain_password):
             return None
         return db_user
+
+    def authorize(
+        self,
+        db_user: user_db_model
+        # level_auth: int
+    )-> Optional[bool]:
+        if db_user.is_admin != True:
+            return False
+        return True
 
 
     # def delete_user(self,db: Session, user: user_schema.User) -> user_db_model:

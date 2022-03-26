@@ -1,7 +1,6 @@
-from os import name
-from tokenize import Name
 from sqlalchemy.orm import Session
-from typing import Dict, Union, Any
+from typing import Dict, Union, Any, Optional
+from models import user_db
 
 from models.user_db import User as user_db_model #chamado de models
 from models.schemas import user_schema #chamado de schema
@@ -76,11 +75,17 @@ class UserCrud(CrudBase[user_db_model,user_schema.UserCreate, user_schema.UserUp
             return None
         return db_user
 
+    def authorize(
+        self,
+        db_user: user_db_model
+        # level_auth: int
+    )-> Optional[bool]:
+        if db_user.is_admin != True:
+            return False
+        return True
 
-    # def delete_user(self,db: Session, user: user_schema.User) -> user_db_model:
-    #     db_user = self.get_user_by_email(db,user.email)
-    #     db.delete(db_user)
-    #     db.commit()
-    #     return db_user
+
+
+
 
 user_crud = UserCrud(user_db_model)

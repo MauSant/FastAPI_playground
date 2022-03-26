@@ -41,6 +41,19 @@ from core.security import oauth2_scheme
 #          raise HTTPException(status_code=404, detail="User not found")
 #     return db_user
 
+# def get_current_super_user(
+#     db: Session = Depends(get_db),
+#     current_user: user_db_model = Depends(get_current_user)
+# )-> user_db_model:
+#     if not user_crud.authorize(current_user):
+#         raise HTTPException(
+#             status_code=400, detail="The user doesn't have enough privileges"
+#         )
+#     return current_user
+
+
+
+
 async def get_current_user(
     db: AsyncDB = Depends(async_get_db),
     token: str = Depends(oauth2_scheme)
@@ -61,3 +74,13 @@ async def get_current_user(
         if not db_user:
          raise HTTPException(status_code=404, detail="User not found")
     return db_user
+
+
+async def get_current_super_user(
+    current_user: user_db_model = Depends(get_current_user)
+)-> user_db_model:
+    if not user_crud.authorize(current_user):
+        raise HTTPException(
+            status_code=400, detail="The user doesn't have enough privileges"
+        )
+    return current_user
