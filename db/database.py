@@ -1,24 +1,23 @@
-from fastapi import Depends
-from sqlalchemy import create_engine
 # from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.asyncio import AsyncSession,create_async_engine
 # import db.db_models.user_db_model 
-from core.config import get_settings 
 
-'''SYNC'''
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://mauricio:123@localhost:3306/fastapi_playground"
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-'''ASYNC'''
-SQLALCHEMY_DATABASE_URL = "mysql+aiomysql://mauricio:123@localhost:3306/fastapi_playground"
-engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
+IS_ASYNC = True
 
 
-
-
+if IS_ASYNC is True:
+    '''ASYNC'''
+    from fastapi import Depends
+    from sqlalchemy.ext.asyncio import AsyncSession,create_async_engine
+    SQLALCHEMY_DATABASE_URL = "mysql+aiomysql://mauricio:123@localhost:3306/fastapi_playground"
+    engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
+else:
+    '''SYNC'''
+    from sqlalchemy import create_engine
+    SQLALCHEMY_DATABASE_URL = "mysql+pymysql://mauricio:123@localhost:3306/fastapi_playground"
+    engine = create_engine(SQLALCHEMY_DATABASE_URL)
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 async def get_db():
