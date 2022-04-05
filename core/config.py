@@ -3,19 +3,27 @@ from optparse import Option
 from typing import Any, Dict, List, Optional, Union
 from functools import cache, lru_cache
 from pydantic import AnyHttpUrl, BaseSettings, EmailStr, HttpUrl, PostgresDsn, validator
-
+from dotenv import load_dotenv
+load_dotenv()
 
 class Settings(BaseSettings):
+    
     IS_ASYNC: bool = True
     DB_DRIVER: Optional[str]
     DB_USER: str
     DB_PASSWORD: str
-    DB_CONNECTION: str #127.0.0.1 or localhost
+    DB_CONNECTION: str #mysql
     DB_HOST: str
     DB_PORT: str #3310
     DB_TABLE_NAME: str 
     DB_URL: Optional[str] = None
 
+    @validator('IS_ASYNC')
+    def convert_int_bool(cls, v: Optional[int]):
+        if isinstance(v, int):
+            if v == 0:
+                return False
+        return True
 
     @validator('DB_DRIVER')
     def driver_none(cls, v: Optional[str]):
@@ -29,7 +37,8 @@ class Settings(BaseSettings):
     @validator('DB_URL')
     def db_url_construct(cls, v: Optional[str], values: dict):
         if isinstance(v,str):
-            return v #in case is already done
+            if v != '':
+                return v #in case is already done
         conn = values.get('DB_CONNECTION')
         driver = values.get('DB_DRIVER')
         user = values.get('DB_USER')
@@ -38,7 +47,7 @@ class Settings(BaseSettings):
         port = values.get('DB_PORT')
         table_name = values.get('DB_TABLE_NAME')
 
-        db_url = conn+driver+'://'+user+password+'@'+host+':'+port+'/'+table_name
+        db_url = conn+driver+'://'+user+":"+password+'@'+host+':'+port+'/'+table_name
         return db_url
 
         
@@ -58,10 +67,10 @@ class Settings(BaseSettings):
     USER_CPF: str
     USER_IS_ADMIN: bool
 
-    # class config:
-    #     env_file = '.env'
-    #     env_file_encoding = 'utf-8'
+    class config:
+        env_file = '.env'
+        env_file_encoding = 'utf-8'
 
 @lru_cache(maxsize=1)
 def get_settings():
-    return Settings(env_file='.env', env_file_encoding='utf- 8')
+    return Settings()

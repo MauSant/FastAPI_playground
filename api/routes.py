@@ -5,11 +5,8 @@ from api.endpoints import user, auth, async_user
 IS_ASYNC = True
 api_router = APIRouter()
 api_router.include_router(auth.router, tags=["auth"])
-api_router.include_router(user.router, prefix="/users", tags=["users"])
-if IS_ASYNC is True:
-    api_router.include_router(async_user.router, prefix="/users", tags=["users-async"])
-else:
-    api_router.include_router(user.router, prefix="/users", tags=["users"])
+api_router.include_router(async_user.router, prefix="/users", tags=["users-async"])
+# api_router.include_router(user.router, prefix="/users", tags=["users"])
 
 @api_router.get("/", tags=["Main"])
 def root():
