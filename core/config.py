@@ -54,7 +54,12 @@ class Settings(BaseSettings):
 
 
     #Security settings
-    CORS_ORIGIN: Optional[Union[list,bool]]
+    CORS_ORIGIN: Optional[Union[list,str]] =  [
+        "http://127.0.0.1:8000",
+        "https://127.0.0.1:8000 ",
+        "http://localhost"
+        "http://localhost:8080",
+    ]
     SECRET_KEY: str
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int

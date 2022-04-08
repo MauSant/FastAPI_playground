@@ -80,7 +80,7 @@ class UserCrud(CrudBase[user_db_model,user_schema.UserCreate, user_schema.UserUp
         db_user: user_db_model
         # level_auth: int
     )-> Optional[bool]:
-        if db_user.is_admin != True:
+        if not db_user.is_admin is True:
             return False
         return True
 

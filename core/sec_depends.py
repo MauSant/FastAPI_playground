@@ -1,24 +1,29 @@
-import imp
-from typing import Union, Any, Dict
-
-from jose import jwt, JWTError
-
-from pydantic import ValidationError
+#FastAPI
 from fastapi import HTTPException
 from fastapi.param_functions import Depends
 from fastapi.security import OAuth2PasswordBearer
+from fastapi import HTTPException, status
 
 
+#From 3th
+from jose import jwt, JWTError
 from sqlalchemy.orm import Session
-from db.database import get_db, async_get_db, AsyncDB
+from typing import Union, Any, Dict
+from pydantic import ValidationError
 
+
+#From 1th
+from db.database import get_db, async_get_db, AsyncDB
+from core.security import oauth2_scheme
+from core.config import get_settings
+from core.sec_config import CREDENTIALS_EXCEPTION, SECRET_KEY, ALGORITHM
+
+
+#Models and crud
 from crud.user_crud import user_crud
-from crud.async_crud.async_user_crud import async_user_crud
 from models.schemas import token_schema
 from models.user_db import User as user_db_model #chamado de models
-from core.sec_config import SECRET_KEY, ALGORITHM, CREDENTIALS_EXCEPTION
-from core.security import oauth2_scheme
-
+from crud.async_crud.async_user_crud import async_user_crud
 
 
 # def get_current_user(

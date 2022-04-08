@@ -2,12 +2,16 @@
 #FastAPI
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from db.init_db import init_db
 
 #From 3th
 import uvicorn
+import asyncio
 
 #From 1th
 from api.routes import api_router
+
+
 app = FastAPI()
 
 app.include_router(api_router)
@@ -30,5 +34,8 @@ app.add_middleware(
 
 
 
+
+
 if __name__ == "__main__":
+    a=asyncio.run(init_db())
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

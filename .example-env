@@ -1,0 +1,19 @@
+    #DB
+    IS_ASYNC       =
+    DB_DRIVER      =
+    DB_USER        =
+    DB_PASSWORD    =
+    DB_CONNECTION  =
+    DB_HOST        =
+    DB_PORT        =
+    DB_TABLE_NAME  =
+    #Security settings
+    SECRET_KEY     =
+    ALGORITHM      =
+    ACCESS_TOKEN_EXPIRE_MINUTES
+    # First user
+    USER_NAME      =
+    USER_PASS      =
+    USER_EMAIL     =
+    USER_CPF       =
+    USER_IS_ADMIN  =
