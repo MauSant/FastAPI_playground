@@ -1,6 +1,6 @@
 from fastapi import Depends
 
-from db.database import AsyncDB, async_get_db, SessionLocal
+from db.database import SessionLocal
 from crud.async_crud.async_user_crud import async_user_crud
 from models.schemas import user_schema
 from core.config import get_settings

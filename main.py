@@ -1,6 +1,6 @@
 
 #FastAPI
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from db.init_db import init_db
 
@@ -33,9 +33,6 @@ app.add_middleware(
 
 
 
-
-
-
 if __name__ == "__main__":
-    a=asyncio.run(init_db())
+    # a=asyncio.run(init_db())
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
