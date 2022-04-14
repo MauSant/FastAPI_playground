@@ -4,6 +4,44 @@ from typing import TypeVar, Generic, List, Optional, Dict
 SchemaType = TypeVar("SchemaType", bound=BaseModel)
 
 
+#TODO
+# def pagination( 
+#         data: List[SchemaType],
+#         page_size: int,
+#         page: int,
+#         path_name: str,
+#         total_count: int
+# )-> dict:
+#     skip = (page-1) * page_size 
+#     limit = skip + page_size # the limit id that i will collect
+#     pagination = {
+#         'data': data,
+#         'total': total_count,
+#         'page_size': page_size,
+#         'current_page': page,
+#         'first_pagge': 1,
+#         'last_page': 0
+#     }
+#     def make_pagination(limit:int,  ):
+#         pass
+
+#     def get_next(limit:int, total_count:int, path_name:str, page:int):
+#         nextt =  f'{path_name}?page_num={page+1}&page_size={page_size}'
+#         if limit >= total_count: #we dont have more pages to get!
+#             pagination['next_page'] = None
+#         else: #We have pages to get!
+#             pagination['next_page'] = nextt
+
+#     def get_previous(path_name:str, page:int):
+#         previous = f'{path_name}?page_num={page-1}&page_size={page_size}'
+#         if page > 1:
+#             pagination['previous_page'] = previous
+#         else:
+#             pagination['previous_page'] = None
+
+
+#     return make_pagination()
+
 class Pagination():
 
     def __init__(
@@ -38,6 +76,7 @@ class Pagination():
             pagination['next'] = nextt
             
         return pagination
+
 
     def mk_dict(self) ->dict:
         dictt = {
