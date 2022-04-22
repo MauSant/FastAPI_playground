@@ -31,7 +31,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def start_debug():
+    a=asyncio.run(init_db())
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
 
 if __name__ == "__main__":
-    # a=asyncio.run(init_db())
+    a=asyncio.run(init_db())
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
