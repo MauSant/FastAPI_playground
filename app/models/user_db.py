@@ -10,4 +10,5 @@ class User(Base):
     cpf = Column(String(16))
     email = Column(String(30),unique=True)
     hash_password = Column(String(100), nullable=False)
-    is_admin = Column(Boolean , nullable=True) 
+    is_admin = Column(Boolean , nullable=True)
+    items = Column(String(36) , nullable=True)

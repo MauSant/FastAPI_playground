@@ -52,6 +52,11 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
+import os
+import sys
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+result = os.path.join(BASE_DIR,"app")
+sys.path.append(result)
 
 from db.base import Base
 target_metadata = Base.metadata

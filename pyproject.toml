@@ -5,7 +5,7 @@ description = "Fast api traning grounds, for test and learning"
 authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.scripts]
-debug = "fastapi.Fast_API_playground.main:start_debug"
+debug = "app.main:start_debug"
 
 [tool.poetry.dependencies]
 python = "^3.9"

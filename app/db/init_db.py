@@ -25,6 +25,6 @@ async def init_db():
                 is_admin=USER_IS_ADMIN
             )
             user = await async_user_crud.create_user(db, new_user=first_user)
-        return 0
+        return await db.close()
     except Exception as e:
         raise e
