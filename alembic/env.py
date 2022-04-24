@@ -41,7 +41,9 @@ $ alembic upgrade head
 
 config = context.config
 '''SYNC'''
-config.set_main_option("sqlalchemy.url","mysql+pymysql://mauricio:123@localhost:3306/fastapi_playground")
+# config.set_main_option("sqlalchemy.url","mysql+pymysql://mauricio:123@localhost:3306/fastapi_playground")
+config.set_main_option("sqlalchemy.url","mysql+pymysql://mauricio:123@db:3306/fastapi_playground")
+
 ''' Async'''
 # config.set_main_option("sqlalchemy.url","mysql+aiomysql://mauricio:123@localhost:3306/fastapi_playground")
 # Interpret the config file for Python logging.
