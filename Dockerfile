@@ -1,4 +1,10 @@
 FROM python:3.9 as requirements-stage
+#For single Docker file use:
+# docker build -t test_fastapi_image . builds the image [dont forget the dot]
+# 1079  docker run -d --name fastapi_test_container -p 8000:8000 test_fastapi_image run the Container
+#  1102  docker ps -a gets the container and their output
+#  1103  docker-compose -f docker-compose.local.yml up -d #Run the container compose
+
 
 # 
 WORKDIR /tmp
