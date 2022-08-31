@@ -6,13 +6,24 @@ from db.init_db import init_db
 
 #From 3th
 import uvicorn
-import asyncio
+from db.database import get_mongo_client, get_db
+
 
 #From 1th
 from api.routes import api_router
 
 
 app = FastAPI()
+
+@app.on_event("startup")
+def startup_db_client():
+    app.mongo_client = get_mongo_client()
+    init_db(app.mongo_client)
+
+
+@app.on_event("shutdown")
+def shutdown_db_client():
+    app.mongo_client.close()
 
 app.include_router(api_router)
 
@@ -30,11 +41,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-#TODO: Not working, must select the interpreter created by poetry and run on a normal launch.json
-# def start_debug():
-#     a=asyncio.run(init_db())
-#     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+
 
 if __name__ == "__main__":
-    a=asyncio.run(init_db())
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

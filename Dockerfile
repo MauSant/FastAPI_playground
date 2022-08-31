@@ -47,6 +47,7 @@ RUN pip install --no-cache-dir --upgrade -r backend/app/requirements.txt
 # 
 # CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 # CMD [ls,"python3","main.py"]
-CMD ["alembic", "upgrade", "head"]
+CMD [ls]
+# CMD ["alembic", "upgrade", "head"]
 
 

@@ -1,51 +1,50 @@
-# from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+
 from core.config import get_settings
-from models.schemas import user_schema
-
-IS_ASYNC = get_settings().IS_ASYNC
-
+from pymongo import MongoClient
+from functools import lru_cache
 
 
-if IS_ASYNC is True:
-    '''ASYNC'''
-    from fastapi import Depends
-    from sqlalchemy.ext.asyncio import AsyncSession,create_async_engine
-    SQLALCHEMY_DATABASE_URL = get_settings().DB_URL
-    engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
-else:
-    '''SYNC'''
-    from sqlalchemy import create_engine
-    SQLALCHEMY_DATABASE_URL = get_settings().DB_URL
-    engine = create_engine(SQLALCHEMY_DATABASE_URL)
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+@lru_cache(maxsize=1)
+def get_db(mongo_client: MongoClient):
+    # db = mongo_client["mongoPlay"]
+    db = mongo_client[get_settings().DB_TABLE_NAME]
+    return db
+
+def get_mongo_client(v:bool=True) -> MongoClient:
+    client = MongoClient(get_settings().DB_URL)
+    return client
+
+
+if __name__ == "__main__":
+    client = get_mongo_client()
+    get_db(client)
+    a = get_db(client)
+    a = get_db(client)
+    a = get_db(client)
 
 
 
-async def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# async def get_db():
+#     db = SessionLocal()
+#     try:
+#         yield db
+#     finally:
+#         db.close()
 
-async def async_get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        await db.close()
+# async def async_get_db():
+#     db = SessionLocal()
+#     try:
+#         yield db
+#     finally:
+#         await db.close()
     
-class AsyncDB(AsyncSession):
-    """Lets you use the following dependency: db: AsyncDB = Depends()"""
+# class AsyncDB(AsyncSession):
+#     """Lets you use the following dependency: db: AsyncDB = Depends()"""
 
-    def __new__(cls, db: AsyncSession = Depends(async_get_db)) -> AsyncSession:
-        return db
-
-
+#     def __new__(cls, db: AsyncSession = Depends(async_get_db)) -> AsyncSession:
+#         return db
 
 
-# Base = declarative_base()
+
 
 

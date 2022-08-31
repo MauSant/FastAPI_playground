@@ -9,8 +9,6 @@ debug = "app.main:start_debug"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-aiomysql="0.0.22"
-alembic="1.7.6"
 anyio="3.5.0"
 asgiref="3.5.0"
 bcrypt="3.2.0"
@@ -30,7 +28,6 @@ passlib="1.7.4"
 pyasn1="0.4.8"
 pycparser="2.21"
 pydantic="1.9.0"
-PyMySQL="0.9.3"
 python-dotenv="0.19.2"
 python-jose="3.3.0"
 python-multipart="0.0.5"
@@ -38,7 +35,6 @@ PyYAML="6.0"
 rsa="4.8"
 six="1.16.0"
 sniffio="1.2.0"
-SQLAlchemy="1.4.31"
 starlette="0.17.1"
 typing-extensions="4.1.1"
 unicorn="1.0.3"
@@ -46,6 +42,7 @@ uvicorn="0.17.5"
 uvloop="0.16.0"
 watchgod="0.7"
 websockets="10.1"
+pymongo = {extras = ["srv"], version = "^4.2.0"}
 
 [tool.poetry.dev-dependencies]
 

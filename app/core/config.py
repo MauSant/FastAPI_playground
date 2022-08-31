@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     DB_CONNECTION: str #mysql
     DB_HOST: str
     DB_PORT: str #3310
-    DB_TABLE_NAME: str 
+    DB_TABLE_NAME: Optional[str] 
     DB_URL: Optional[str] = None
 
     @validator('IS_ASYNC')
@@ -44,8 +44,8 @@ class Settings(BaseSettings):
         user = values.get('DB_USER')
         password = values.get('DB_PASSWORD')
         host = values.get('DB_HOST')
-        port = values.get('DB_PORT')
-        table_name = values.get('DB_TABLE_NAME')
+        port = values.get('DB_PORT','')
+        table_name = values.get('DB_TABLE_NAME','')
 
         db_url = conn+driver+'://'+user+":"+password+'@'+host+':'+port+'/'+table_name
         return db_url
