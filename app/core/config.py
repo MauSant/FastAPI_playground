@@ -44,10 +44,14 @@ class Settings(BaseSettings):
         user = values.get('DB_USER')
         password = values.get('DB_PASSWORD')
         host = values.get('DB_HOST')
-        port = values.get('DB_PORT','')
-        table_name = values.get('DB_TABLE_NAME','')
+        port = values.get('DB_PORT')
+        table_name = values.get('DB_TABLE_NAME')
 
-        db_url = conn+driver+'://'+user+":"+password+'@'+host+':'+port+'/'+table_name
+        if conn == "mysql":
+            db_url = conn+driver+'://'+user+":"+password+'@'+host+':'+port+'/'+table_name
+        elif conn  == "mongodb":
+            db_url = conn+driver+'://'+user+":"+password+'@'+host
+
         return db_url
 
         

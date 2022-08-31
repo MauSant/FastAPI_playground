@@ -10,22 +10,14 @@ from db.database import get_mongo_client
 
 
 #From 1th
-# from api.routes import api_router
+from api.routes import api_router
 
 
 app = FastAPI()
 
-@app.on_event("startup")
-def startup_db_client():
-    app.mongo_client = get_mongo_client()
-    init_db(app.mongo_client)
 
 
-@app.on_event("shutdown")
-def shutdown_db_client():
-    app.mongo_client.close()
-
-# app.include_router(api_router)
+app.include_router(api_router)
 
 origins = [
     "http://127.0.0.1:8000",
