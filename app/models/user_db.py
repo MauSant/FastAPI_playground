@@ -1,9 +1,10 @@
 from models.py_object_id import PyObjectId
 from bson import ObjectId
-from pydantic import BaseModel,Field
+from pydantic import Field
+from models.collection import Collection
 from typing import Optional
 
-class User(BaseModel):
+class Users(Collection):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name: str
     cpf: str

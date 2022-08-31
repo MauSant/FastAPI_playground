@@ -1,11 +1,11 @@
 from fastapi import APIRouter
-# from api.endpoints import user
-from db.init_db import init_db
+from api.endpoints import user
+from db.init_db import init_db, close_db
 from db.database import get_mongo_client
 
 
 api_router = APIRouter()
-# api_router.include_router(user.router, prefix="/users", tags=["users"])
+api_router.include_router(user.router, prefix="/users", tags=["users"])
 # api_router.include_router(async_user.router, prefix="/users", tags=["users-async"])
 # api_router.include_router(auth.router, tags=["auth"])
 
@@ -13,13 +13,14 @@ api_router = APIRouter()
 
 @api_router.on_event("startup")
 def startup_db_client():
-    api_router.mongo_client = get_mongo_client()
-    init_db(api_router.mongo_client)
+    # api_router.mongo_client = get_mongo_client()
+    # init_db(api_router.mongo_client)
+    init_db()
 
 
 @api_router.on_event("shutdown")
 def shutdown_db_client():
-    api_router.mongo_client.close()   
+    close_db()  
 
 
 @api_router.get("/", tags=["Main"])

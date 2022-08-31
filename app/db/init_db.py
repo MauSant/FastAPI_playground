@@ -1,4 +1,4 @@
-from db.database import get_db
+from db.database import get_db,get_mongo_client
 from core.config import get_settings
 from pymongo import MongoClient
 
@@ -8,12 +8,16 @@ USER_EMAIL = get_settings().USER_EMAIL
 USER_CPF = get_settings().USER_CPF
 USER_IS_ADMIN = get_settings().USER_IS_ADMIN
 
-def init_db(mongo_client: MongoClient) -> None:
-    db =  get_db(mongo_client)
+def init_db() -> None:
+    db =  get_db()
     pass
     #TODO: We must make a get call to see if the user exists,
     #TODO: in case there is no user, we must create 1
 
+
+def close_db():
+    client = get_mongo_client()
+    client.close()
     
 # async def init_db():
 #     db = SessionLocal()

@@ -9,7 +9,9 @@ class UserBase(BaseModel):
     email: str
 
 class UserCreate(UserBase):
-    password: str
+    hash_password: str
+    
+    # password: str
     is_admin: Optional[bool]
 
 class UserUpdate(UserBase):
@@ -17,11 +19,10 @@ class UserUpdate(UserBase):
     is_admin: Optional[bool]
 
 class UserOut(UserBase):
-    class Config:#Precisa disso para transformar da classe User do db em UserOut!
-        orm_mode = True
+    pass
 
 class User(UserBase):
-    id: int
+    id: str
     password: str
 
     class Config: #Precisa disso para salvar no banco
@@ -29,6 +30,8 @@ class User(UserBase):
 
 class UserInDB(User):
     hash_password: str
+    is_admin: Optional[bool]
+
 
 
 class UserPageOut(PageResponse):

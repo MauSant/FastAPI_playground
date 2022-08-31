@@ -5,12 +5,13 @@ from functools import lru_cache
 
 
 @lru_cache(maxsize=1)
-def get_db(mongo_client: MongoClient):
-    # db = mongo_client["mongoPlay"]
+def get_db():
+    mongo_client  = get_mongo_client()
     db = mongo_client[get_settings().DB_TABLE_NAME]
     return db
 
-def get_mongo_client(v:bool=True) -> MongoClient:
+@lru_cache(maxsize=1)
+def get_mongo_client(v:bool= True) -> MongoClient:
     client = MongoClient(get_settings().DB_URL)
     return client
 
