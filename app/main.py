@@ -6,11 +6,11 @@ from db.init_db import init_db
 
 #From 3th
 import uvicorn
-from db.database import get_mongo_client, get_db
+from db.database import get_mongo_client
 
 
 #From 1th
-from api.routes import api_router
+# from api.routes import api_router
 
 
 app = FastAPI()
@@ -25,7 +25,7 @@ def startup_db_client():
 def shutdown_db_client():
     app.mongo_client.close()
 
-app.include_router(api_router)
+# app.include_router(api_router)
 
 origins = [
     "http://127.0.0.1:8000",

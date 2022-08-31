@@ -1,8 +1,4 @@
-from fastapi import Depends
-
 from db.database import get_db
-from crud.async_crud.async_user_crud import async_user_crud
-from models.schemas import user_schema
 from core.config import get_settings
 from pymongo import MongoClient
 
