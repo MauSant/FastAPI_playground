@@ -1,13 +1,12 @@
 from fastapi import APIRouter
-from api.endpoints import user
+from api.endpoints import user,auth
 from db.init_db import init_db, close_db
-from db.database import get_mongo_client
 
 
 api_router = APIRouter()
+# api_router.include_router(auth.router, tags=["auth"])
 api_router.include_router(user.router, prefix="/users", tags=["users"])
 # api_router.include_router(async_user.router, prefix="/users", tags=["users-async"])
-# api_router.include_router(auth.router, tags=["auth"])
 
 
 

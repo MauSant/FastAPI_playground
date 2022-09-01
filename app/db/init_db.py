@@ -1,6 +1,10 @@
 from db.database import get_db,get_mongo_client
 from core.config import get_settings
 from pymongo import MongoClient
+from crud.user_crud import user_crud
+from models.schemas.user_schema import UserCreate 
+
+
 
 USER_NAME = get_settings().USER_NAME
 USER_PASS = get_settings().USER_PASS
@@ -10,9 +14,18 @@ USER_IS_ADMIN = get_settings().USER_IS_ADMIN
 
 def init_db() -> None:
     db =  get_db()
-    pass
-    #TODO: We must make a get call to see if the user exists,
-    #TODO: in case there is no user, we must create 1
+
+    user = user_crud.get_user_by_email(db, USER_EMAIL)
+    if not user:
+        first_user = UserCreate(
+            name=USER_NAME,
+            cpf=USER_CPF,
+            email=USER_EMAIL,
+            password=USER_PASS,
+            is_admin=USER_IS_ADMIN,
+        )
+        user_crud.create_user(db,first_user)
+    return None
 
 
 def close_db():
