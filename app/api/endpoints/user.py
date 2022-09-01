@@ -25,7 +25,7 @@ router = APIRouter()
  response_model=user_schema.UserOut
 )
 def read_user_by_id(
-    user_id: str,
+    user_id: PyObjectId,
     db: Database = Depends(get_db),
     # current_user = Depends(get_current_user)
 ):

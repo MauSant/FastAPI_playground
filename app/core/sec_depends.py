@@ -12,7 +12,7 @@ from pydantic import ValidationError
 from pymongo.database import Database
 
 #From 1th
-from db.database import get_db, async_get_db, AsyncDB
+from db.database import get_db
 from core.security import oauth2_scheme
 from core.config import get_settings
 from core.sec_config import CREDENTIALS_EXCEPTION, SECRET_KEY, ALGORITHM
@@ -21,8 +21,7 @@ from core.sec_config import CREDENTIALS_EXCEPTION, SECRET_KEY, ALGORITHM
 #Models and crud
 from crud.user_crud import user_crud
 from models.schemas import token_schema
-from models.user_db import User as user_db_model #chamado de models
-from crud.async_crud.async_user_crud import async_user_crud
+from models.user_db import Users as user_db_model #chamado de models
 
 
 def get_current_user(
@@ -46,7 +45,7 @@ def get_current_user(
     return db_user
 
 
-async def get_current_super_user(
+def get_current_super_user(
     current_user: user_db_model = Depends(get_current_user)
 )-> user_db_model:
     if not user_crud.authorize(current_user):
