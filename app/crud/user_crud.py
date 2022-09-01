@@ -65,7 +65,7 @@ class UserCrud(
 
     def authenticate_user(
         self,
-        db: Session,
+        db: Database,
         username: str,
         plain_password: str
     )-> user_db_model:
