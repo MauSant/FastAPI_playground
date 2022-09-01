@@ -9,10 +9,8 @@ class UserBase(BaseModel):
     email: str
 
 class UserCreate(UserBase):
-    hash_password: str
-    
-    # password: str
-    is_admin: Optional[bool]
+    password: str
+    is_admin: Optional[bool] = False
 
 class UserUpdate(UserBase):
     password: Optional[str]

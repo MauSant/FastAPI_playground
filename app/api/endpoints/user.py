@@ -68,8 +68,7 @@ def store_user(
         raise HTTPException(
             status_code=400,
             detail="User already registered")
-    db_user = user_crud.create(db=db, model_in=user)
-    # db_user = user_crud.create_user(db=db, new_user=user)
+    db_user = user_crud.create_user(db=db, new_user=user)
     return db_user
 
 # @router.put("/update/{user_id}", response_model= user_schema.UserOut)

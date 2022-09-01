@@ -68,7 +68,7 @@ class CrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
 
     def create(self, db: Database, model_in: CreateSchemaType)-> ModelType:
         db_model: ModelType = self.model(**model_in.dict())
-        db[self.model.c_name()].insert_one(db_model.dict())
+        db[self.model.c_name()].insert_one(db_model.change_id_key())
         return db_model
 
 
