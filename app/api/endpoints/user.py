@@ -5,7 +5,7 @@ from fastapi import Body, HTTPException, Query, Path
 #From 1th
 from crud.user_crud import user_crud
 from db.database import get_db
-# from core.sec_depends import get_current_user, get_current_super_user
+from core.sec_depends import get_current_user, get_current_super_user
 from utils.pagination import page_response, Pagination
 
 #from 3th

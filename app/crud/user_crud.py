@@ -76,14 +76,14 @@ class UserCrud(
             return None
         return db_user
 
-    # def authorize(
-    #     self,
-    #     db_user: user_db_model
-    #     # level_auth: int
-    # )-> Optional[bool]:
-    #     if not db_user.is_admin is True:
-    #         return False
-    #     return True
+    async def authorize(
+        self,
+        db_user: user_db_model
+        # level_auth: int
+    )-> Optional[bool]:
+        if not db_user.is_admin is True:
+            return False
+        return True
 
 
 
