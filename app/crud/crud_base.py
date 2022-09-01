@@ -27,9 +27,9 @@ class CrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
         self.model = model
     
 
-    def get_by_id(self,db: Database, model_id: PyObjectId):
+    def get_by_id(self,db: Database, model_id: PyObjectId) -> ModelType:
         result = db[self.model.c_name()].find_one({"_id":model_id})
-        return result
+        return self.model(**result)
 
 
     # def get_all(self, db: Database):

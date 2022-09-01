@@ -16,7 +16,7 @@ class UserCrud(
 
     def get_user_by_email(self,db: Database, email: str) -> user_db_model:
         result = db[self.model.c_name()].find_one({"email":email})
-        return result
+        return user_db_model(**result)
 
     # def filter_user_by_name(self,db: Session, name: str) -> user_db_model:
     #     return db.query(user_db_model).filter(user_db_model.name == name).all()
