@@ -9,9 +9,9 @@ from fastapi.security import OAuth2PasswordBearer
 
 from core.sec_config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
-
+from models.py_object_id import PyObjectId
 # oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login/access_token")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="async/login/access_token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/access_token")
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -19,7 +19,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def create_access_token(
-    subject: Union[str,Any],
+    subject: PyObjectId,
     expires_delta: timedelta = None,
 ):
     if expires_delta:

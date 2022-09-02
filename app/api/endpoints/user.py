@@ -14,7 +14,7 @@ from pymongo.database import Database
 
 #models & schemas
 from models.schemas import user_schema
-from models import user_db
+from models.user_db import Users as user_db_model
 from models.py_object_id import PyObjectId
 
 
@@ -25,9 +25,9 @@ router = APIRouter()
  response_model=user_schema.UserOut
 )
 def read_user_by_id(
-    user_id: PyObjectId,
+    user_id: str,
     db: Database = Depends(get_db),
-    # current_user = Depends(get_current_user)
+    current_user:user_db_model = Depends(get_current_user)
 ):
     db_user = user_crud.get_by_id(db,user_id)
     if db_user is None:

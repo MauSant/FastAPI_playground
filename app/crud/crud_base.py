@@ -27,8 +27,9 @@ class CrudBase(Generic[ModelType,CreateSchemaType,UpdateSchemaType]):
         self.model = model
     
 
-    def get_by_id(self,db: Database, model_id: PyObjectId) -> ModelType:
-        result = db[self.model.c_name()].find_one({"_id":model_id})
+    def get_by_id(self,db: Database, model_id: str) -> ModelType:
+        id_object = PyObjectId(model_id)
+        result = db[self.model.c_name()].find_one({"_id":id_object})
         return self.model(**result)
 
 

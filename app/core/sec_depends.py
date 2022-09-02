@@ -38,7 +38,7 @@ def get_current_user(
     except (JWTError, ValidationError):
         raise CREDENTIALS_EXCEPTION
     else:
-        user_id = token_data.sub
+        user_id:str = token_data.sub
         db_user = user_crud.get_by_id(db, user_id)
         if not db_user:
          raise HTTPException(status_code=404, detail="User not found")
